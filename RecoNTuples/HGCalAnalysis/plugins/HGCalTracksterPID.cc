@@ -219,6 +219,7 @@ class HGCalTracksterPID : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::
   edm::EDGetTokenT<std::vector<ticl::Trackster>> trackstersEM_;
   edm::EDGetTokenT<std::vector<ticl::Trackster>> trackstersHAD_;
   edm::EDGetTokenT<std::vector<ticl::Trackster>> trackstersMIP_;
+  edm::EDGetTokenT<std::vector<ticl::Trackster>> trackstersTrk_;
 
   TTree *t_;
 
@@ -326,6 +327,7 @@ class HGCalTracksterPID : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::
   std::vector<std::vector<unsigned int>> tracksterEM_clusters_;
   std::vector<std::vector<unsigned int>> tracksterHAD_clusters_;
   std::vector<std::vector<unsigned int>> tracksterMIP_clusters_;
+  std::vector<std::vector<unsigned int>> tracksterTrk_clusters_;
 
   ////////////////////
   // multi clusters
@@ -554,6 +556,7 @@ HGCalTracksterPID::HGCalTracksterPID(const edm::ParameterSet &iConfig)
   trackstersEM_ = consumes<std::vector<ticl::Trackster>>(edm::InputTag("trackstersEM"));
   trackstersHAD_ = consumes<std::vector<ticl::Trackster>>(edm::InputTag("trackstersHAD"));
   trackstersMIP_ = consumes<std::vector<ticl::Trackster>>(edm::InputTag("trackstersMIP"));
+  trackstersTrk_ = consumes<std::vector<ticl::Trackster>>(edm::InputTag("trackstersTrk"));
 
   pfClusters_ = consumes<std::vector<reco::PFCluster>>(edm::InputTag("particleFlowClusterHGCal"));
   pfClustersFromMultiCl_ =
@@ -668,6 +671,7 @@ HGCalTracksterPID::HGCalTracksterPID(const edm::ParameterSet &iConfig)
     t_->Branch("tracksterEM_clusters", &tracksterEM_clusters_);
     t_->Branch("tracksterHAD_clusters", &tracksterHAD_clusters_);
     t_->Branch("tracksterMIP_clusters", &tracksterMIP_clusters_);
+    t_->Branch("tracksterTrk_clusters", &tracksterTrk_clusters_);
   }
   ////////////////////
   // multi clusters
@@ -966,6 +970,7 @@ void HGCalTracksterPID::clearVariables() {
   tracksterEM_clusters_.clear();
   tracksterHAD_clusters_.clear();
   tracksterMIP_clusters_.clear();
+  tracksterTrk_clusters_.clear();
   ////////////////////
   // multi clusters
   //
@@ -1121,6 +1126,10 @@ void HGCalTracksterPID::analyze(const edm::Event &iEvent, const edm::EventSetup 
   Handle<std::vector<ticl::Trackster>> trackstersMIPHandle;
   iEvent.getByToken(trackstersMIP_, trackstersMIPHandle);
   const std::vector<ticl::Trackster> &trackstersMIP = (*trackstersMIPHandle);
+
+  Handle<std::vector<ticl::Trackster>> trackstersTrkHandle;
+  iEvent.getByToken(trackstersTrk_, trackstersTrkHandle);
+  const std::vector<ticl::Trackster> &trackstersTrk = (*trackstersTrkHandle);
 
   Handle<HGCRecHitCollection> recHitHandleEE;
   Handle<HGCRecHitCollection> recHitHandleFH;
@@ -1369,6 +1378,7 @@ void HGCalTracksterPID::analyze(const edm::Event &iEvent, const edm::EventSetup 
   unsigned int ntracksterEM = 0;
   unsigned int ntracksterHAD = 0;
   unsigned int ntracksterMIP = 0;
+  unsigned int ntracksterTrk = 0;
 
   if(doTracksters_)
   {
@@ -1419,6 +1429,22 @@ void HGCalTracksterPID::analyze(const edm::Event &iEvent, const edm::EventSetup 
       std::cout << std::endl;
       std::cout << std::endl;
       tracksterMIP_clusters_.push_back(ids);
+    }
+
+    ntracksterTrk = trackstersTrk.size();
+    for (unsigned it = 0; it < ntracksterTrk; ++it)
+    {
+      std::cout << "TracksterTrk " << it << std::endl;
+
+      std::vector<unsigned int> ids;
+      for (unsigned int i = 0; i < trackstersTrk[it].vertices.size(); i++)
+      {
+        std::cout << trackstersTrk[it].vertices[i] << " - ";
+        ids.push_back(trackstersTrk[it].vertices[i]);
+      }
+      std::cout << std::endl;
+      std::cout << std::endl;
+      tracksterTrk_clusters_.push_back(ids);
     }
 
   }
