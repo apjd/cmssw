@@ -19,7 +19,8 @@ from RecoHGCal.TICL.multiClustersFromTrackstersProducer_cfi import multiClusters
 ## withReco: requires full reco of the event to run this part
 ## i.e. collections of generalTracks can be accessed
 def TICL_iterations_withReco(process):
-  process.FEVTDEBUGHLTEventContent.outputCommands.extend(['keep *_multiClustersFromTracksters*_*_*'])
+#   process.FEVTDEBUGHLTEventContent.outputCommands.extend(['keep *_multiClustersFromTracksters*_*_*'])
+  process.FEVTDEBUGHLTEventContent.outputCommands.extend(['keep *_tracksters*_*_*'])
 
   process.ticlLayerTileProducer = ticlLayerTileProducer.clone()
 
