@@ -1,0 +1,242 @@
+Reading cached build data
+>> Local Products Rules ..... started
+>> Local Products Rules ..... done
+>> Building CMSSW version CMSSW_11_1_0_pre5 ----
+>> Subsystem BigProducts built
+>> Entering Package DQM/SiOuterTracker
+>> Creating project symlinks
+>> Entering Package DataFormats/L1TrackTrigger
+>> Entering Package DataFormats/TrackerRecHit2D
+>> Entering Package RecoTracker/TrackProducer
+>> Entering Package TrackingTools/TrajectoryState
+>> Entering Package Validation/SiOuterTrackerV
+>> Entering Package L1Trigger/TrackTrigger
+>> Entering Package RecoTracker/TkSeedGenerator
+>> Entering Package RecoTracker/CkfPattern
+>> Entering Package L1Trigger/TrackFindingTMTT
+>> Entering Package L1Trigger/TrackFindingTracklet
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/TrackingTools/TrajectoryState/src/TrajectoryStateTransform.cc 
+>> Leaving Package DataFormats/L1TrackTrigger
+>> Leaving Package DataFormats/TrackerRecHit2D
+>> Package DataFormats/L1TrackTrigger built
+>> Package DataFormats/TrackerRecHit2D built
+Entering library rule at RecoTracker/CkfPattern
+>> Subsystem DataFormats built
+Entering library rule at src/RecoTracker/CkfPattern/plugins
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/CachingSeedCleanerBySharedInput.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/IntermediateTrajectoryCleaner.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/BaseCkfTrajectoryBuilderFactory.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/PrintoutHelper.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/CkfTrackCandidateMakerBase.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/BaseCkfTrajectoryBuilder.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/TransientInitialStateEstimator.cc 
+/lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/TrackingTools/TrajectoryState/src/TrajectoryStateTransform.cc: In function 'FreeTrajectoryState trajectoryStateTransform::initialFreeStateTTrack(const TTTrack<edm::Ref<edm::DetSetVector<Phase2TrackerDigi>, Phase2TrackerDigi> >&, const MagneticField*, bool)':
+/lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/TrackingTools/TrajectoryState/src/TrajectoryStateTransform.cc:90:9: warning: unused variable 'k' [-Wunused-variable]
+     int k = 0;
+         ^
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/src/CkfTrajectoryBuilder.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/plugins/TrajectorySegmentBuilder.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/plugins/GroupedCkfTrajectoryBuilder.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/CkfPattern/plugins/SealModules.cc 
+Entering library rule at src/L1Trigger/TrackTrigger/test
+Entering library rule at RecoTracker/TkSeedGenerator
+>> Building LCG reflex dict from header file src/RecoTracker/TkSeedGenerator/src/classes.h
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/FastLine.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/SeedGeneratorFromRegionHits.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/MultiHitGeneratorFromPairAndLayersFactory.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/MultiHitGenerator.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/SeedCreatorFactory.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/FastHelix.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/MultiHitGeneratorFromPairAndLayers.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/SeedFromProtoTrack.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/ClusterChecker.cc 
+>> Compiling  /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/src/FastCircle.cc 
+Entering library rule at src/L1Trigger/TrackFindingTracklet/test
+Entering library rule at src/RecoTracker/TkSeedGenerator/plugins
+>> Building shared library tmp/slc7_amd64_gcc820/src/TrackingTools/TrajectoryState/src/TrackingToolsTrajectoryState/libTrackingToolsTrajectoryState.so
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/L1Trigger/TrackTrigger/test/AnalyzerSimHitMaps.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/L1Trigger/TrackTrigger/test/AnalyzerClusterStub.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/L1Trigger/TrackTrigger/test/AnalyzerPrintGeomInfo.cc 
+Copying tmp/slc7_amd64_gcc820/src/TrackingTools/TrajectoryState/src/TrackingToolsTrajectoryState/libTrackingToolsTrajectoryState.so to productstore area:
+>> Checking EDM Class Version for src/TrackingTools/TrajectoryState/src/classes_def.xml in libTrackingToolsTrajectoryState.so
+>> Compiling LCG dictionary: tmp/slc7_amd64_gcc820/src/RecoTracker/TkSeedGenerator/src/RecoTrackerTkSeedGenerator/a/RecoTrackerTkSeedGenerator_xr.cc
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/L1Trigger/TrackFindingTracklet/test/L1TrackNtupleMaker.cc 
+@@@@ ----> OK  EDM Class Version 
+>> Checking EDM Class Transients in libTrackingToolsTrajectoryState.so
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedFromConsecutiveHitsTripletOnlyCreator.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/MultiHitGeneratorFromChi2.cc 
+@@@@ ----> OK  EDM Class Transients 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedGeneratorFromRegionHitsEDProducer.cc 
+Leaving library rule at TrackingTools/TrajectoryState
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedFromConsecutiveHitsStraightLineCreator.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SealModules.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedCombiner.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/ClusterCheckerEDProducer.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/MultiHitFromChi2EDProducer.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedGeneratorFromTTracksEDProducer.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedGeneratorFromProtoTracksEDProducer.cc 
+In file included from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/BinaryOpPolicy.h:21,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/BinaryOperators.h:21,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/SVector.h:360,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/DataFormats/Math/interface/AlgebraicROOTObjects.h:5,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/DataFormats/CLHEP/interface/Migration.h:4,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/DataFormats/CLHEP/interface/AlgebraicObjects.h:17,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/DataFormats/TrackingRecHit/interface/TrackingRecHit.h:4,
+                 from /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/DataFormats/TrackerRecHit2D/interface/trackerHitRTTI.h:4,
+                 from /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/DataFormats/TrackerRecHit2D/interface/BaseTrackerRecHit.h:4,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedingLayers/interface/SeedingHitSet.h:4,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedingLayers/interface/OrderedSeedingHits.h:4,
+                 from /cvmfs/cms.cern.ch/slc7_amd64_gcc820/cms/cmssw/CMSSW_11_1_0_pre5/src/RecoTracker/TkTrackingRegions/interface/OrderedHitsGenerator.h:4,
+                 from /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/interface/MultiHitGenerator.h:8,
+                 from /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/MultiHitGeneratorFromChi2.h:11,
+                 from /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/MultiHitGeneratorFromChi2.cc:1:
+/cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/MatrixRepresentationsStatic.h: In member function 'void MultiHitGeneratorFromChi2::refit2Hits(MultiHitGeneratorFromChi2::HitOwnPtr&, MultiHitGeneratorFromChi2::HitOwnPtr&, TrajectoryStateOnSurface&, TrajectoryStateOnSurface&, const TrackingRegion&, float, bool)':
+/cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/MatrixRepresentationsStatic.h:253:69: warning: '*((void*)&<anonymous> +112)' is used uninitialized in this function [-Wuninitialized]
+          for(unsigned int i=0; i<kSize; ++i) fArray[i] = rhs.Array()[i];
+                                                          ~~~~~~~~~~~^
+/cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/MatrixRepresentationsStatic.h:253:69: warning: '*((void*)&<anonymous> +112)' is used uninitialized in this function [-Wuninitialized]
+          for(unsigned int i=0; i<kSize; ++i) fArray[i] = rhs.Array()[i];
+                                                          ~~~~~~~~~~~^
+/cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/MatrixRepresentationsStatic.h: In member function 'void MultiHitGeneratorFromChi2::hitSets(const TrackingRegion&, OrderedMultiHits&, const edm::EventSetup&, const HitDoublets&, const RecHitsSortedInPhi**, const std::vector<const DetLayer*>&, int, MultiHitGeneratorFromPairAndLayers::cacheHits&)':
+/cvmfs/cms.cern.ch/slc7_amd64_gcc820/lcg/root/6.18.04-bcolbf4/include/Math/MatrixRepresentationsStatic.h:253:69: warning: '*((void*)&<anonymous> +112)' may be used uninitialized in this function [-Wmaybe-uninitialized]
+          for(unsigned int i=0; i<kSize; ++i) fArray[i] = rhs.Array()[i];
+                                                          ~~~~~~~~~~~^
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/SeedFromConsecutiveHitsCreator.cc 
+>> Compiling edm plugin /lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5/src/RecoTracker/TkSeedGenerator/plugins/CombinedMultiHitGenerator.cc 
+>> Building shared library tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/src/RecoTrackerTrackProducer/libRecoTrackerTrackProducer.so
+>> Building binary testTSOS
+Copying tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/src/RecoTrackerTrackProducer/libRecoTrackerTrackProducer.so to productstore area:
+Leaving library rule at RecoTracker/TrackProducer
+>> Building binary testProxy
+Copying tmp/slc7_amd64_gcc820/src/TrackingTools/TrajectoryState/test/testTSOS/testTSOS to productstore area:
+>> Building binary testChurn
+Copying tmp/slc7_amd64_gcc820/src/TrackingTools/TrajectoryState/test/testChurn/testChurn to productstore area:
+>> Building shared library tmp/slc7_amd64_gcc820/src/RecoTracker/CkfPattern/src/RecoTrackerCkfPattern/libRecoTrackerCkfPattern.so
+Copying tmp/slc7_amd64_gcc820/src/TrackingTools/TrajectoryState/test/testProxy/testProxy to productstore area:
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/test/TrajectoryAnalyzer/libTrajectoryAnalyzer.so
+Copying tmp/slc7_amd64_gcc820/src/RecoTracker/CkfPattern/src/RecoTrackerCkfPattern/libRecoTrackerCkfPattern.so to productstore area:
+Leaving library rule at RecoTracker/CkfPattern
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/test/TrackValidator/libTrackValidator.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/test/FakeCPEFiller/libFakeCPEFiller.so
+Leaving library rule at src/RecoTracker/TrackProducer/test
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/test/TrackAnalyzer/libTrackAnalyzer.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/DQM/SiOuterTracker/plugins/DQMSiOuterTrackerAuto/libDQMSiOuterTrackerAuto.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/Validation/SiOuterTrackerV/plugins/ValidationSiOuterTrackerVAuto/libValidationSiOuterTrackerVAuto.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/Validation/SiOuterTrackerV/src/ValidationSiOuterTrackerV/libValidationSiOuterTrackerV.so
+>> Building shared library tmp/slc7_amd64_gcc820/src/L1Trigger/TrackTrigger/src/L1TriggerTrackTrigger/libL1TriggerTrackTrigger.so
+Leaving library rule at src/RecoTracker/TrackProducer/test
+>> Building shared library tmp/slc7_amd64_gcc820/src/RecoTracker/TkSeedGenerator/src/RecoTrackerTkSeedGenerator/libRecoTrackerTkSeedGenerator.so
+Leaving library rule at src/RecoTracker/TrackProducer/test
+>> Building shared library tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTMTT/src/L1TriggerTrackFindingTMTT/libL1TriggerTrackFindingTMTT.so
+>> Building shared library tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTracklet/src/L1TriggerTrackFindingTracklet/libL1TriggerTrackFindingTracklet.so
+Leaving library rule at src/RecoTracker/TrackProducer/test
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TrackProducer/plugins/RecoTrackerTrackProducerPlugins/libRecoTrackerTrackProducerPlugins.so
+Copying tmp/slc7_amd64_gcc820/src/RecoTracker/TkSeedGenerator/src/RecoTrackerTkSeedGenerator/libRecoTrackerTkSeedGenerator.so to productstore area:
+>> Checking EDM Class Version for src/RecoTracker/TkSeedGenerator/src/classes_def.xml in libRecoTrackerTkSeedGenerator.so
+Leaving library rule at Validation/SiOuterTrackerV
+@@@@ Running edmWriteConfigs for TrajectoryAnalyzer
+Copying tmp/slc7_amd64_gcc820/src/L1Trigger/TrackTrigger/src/L1TriggerTrackTrigger/libL1TriggerTrackTrigger.so to productstore area:
+Leaving library rule at src/Validation/SiOuterTrackerV/plugins
+@@@@ Running edmWriteConfigs for TrackValidator
+--- Registered EDM Plugin: TrajectoryAnalyzer
+@@@@ Running edmWriteConfigs for FakeCPEFiller
+Leaving library rule at src/DQM/SiOuterTracker/plugins
+Leaving library rule at L1Trigger/TrackTrigger
+@@@@ Running edmWriteConfigs for TrackAnalyzer
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/CkfPattern/plugins/RecoTrackerCkfPatternPlugins/libRecoTrackerCkfPatternPlugins.so
+--- Registered EDM Plugin: TrackValidator
+--- Registered EDM Plugin: FakeCPEFiller
+--- Registered EDM Plugin: TrackAnalyzer
+@@@@ Running edmWriteConfigs for DQMSiOuterTrackerAuto
+@@@@ Running edmWriteConfigs for ValidationSiOuterTrackerVAuto
+@@@@ Running edmWriteConfigs for ValidationSiOuterTrackerV
+Copying tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTracklet/src/L1TriggerTrackFindingTracklet/libL1TriggerTrackFindingTracklet.so to productstore area:
+Leaving library rule at L1Trigger/TrackFindingTracklet
+>> Leaving Package TrackingTools/TrajectoryState
+>> Package TrackingTools/TrajectoryState built
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/L1Trigger/TrackTrigger/plugins/TrackTriggerPlugins/libTrackTriggerPlugins.so
+Leaving library rule at src/RecoTracker/CkfPattern/plugins
+@@@@ Running edmWriteConfigs for RecoTrackerCkfPatternPlugins
+Leaving library rule at src/RecoTracker/TrackProducer/plugins
+>> Subsystem TrackingTools built
+@@@@ Running edmWriteConfigs for RecoTrackerTrackProducerPlugins
+--- Registered EDM Plugin: RecoTrackerCkfPatternPlugins
+>> Leaving Package RecoTracker/CkfPattern
+>> Package RecoTracker/CkfPattern built
+@@@@ ----> OK  EDM Class Version 
+>> Checking EDM Class Transients in libRecoTrackerTkSeedGenerator.so
+Leaving library rule at src/L1Trigger/TrackTrigger/plugins
+@@@@ Running edmWriteConfigs for TrackTriggerPlugins
+gsfTrackProducer
+--- Registered EDM Plugin: ValidationSiOuterTrackerV
+--- Registered EDM Plugin: RecoTrackerTrackProducerPlugins
+>> Leaving Package RecoTracker/TrackProducer
+>> Package RecoTracker/TrackProducer built
+--- Registered EDM Plugin: DQMSiOuterTrackerAuto
+>> Leaving Package DQM/SiOuterTracker
+>> Package DQM/SiOuterTracker built
+>> Subsystem DQM built
+--- Registered EDM Plugin: ValidationSiOuterTrackerVAuto
+>> Leaving Package Validation/SiOuterTrackerV
+>> Package Validation/SiOuterTrackerV built
+>> Subsystem Validation built
+--- Registered EDM Plugin: TrackTriggerPlugins
+@@@@ ----> OK  EDM Class Transients 
+Leaving library rule at RecoTracker/TkSeedGenerator
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/L1Trigger/TrackTrigger/test/L1TriggerTrackTriggerTests/libL1TriggerTrackTriggerTests.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTracklet/test/TrackFindingTrackletTests/libTrackFindingTrackletTests.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/RecoTracker/TkSeedGenerator/plugins/RecoTrackerTkSeedGeneratorPlugins/libRecoTrackerTkSeedGeneratorPlugins.so
+Leaving library rule at src/RecoTracker/TkSeedGenerator/plugins
+@@@@ Running edmWriteConfigs for RecoTrackerTkSeedGeneratorPlugins
+Leaving library rule at src/L1Trigger/TrackTrigger/test
+@@@@ Running edmWriteConfigs for L1TriggerTrackTriggerTests
+Leaving library rule at src/L1Trigger/TrackFindingTracklet/test
+@@@@ Running edmWriteConfigs for TrackFindingTrackletTests
+SeedGeneratorFromProtoTracksEDProducer
+seedCreatorFromRegionConsecutiveHitsEDProducer
+seedCreatorFromRegionConsecutiveHitsTripletOnlyEDProducer
+trackerClusterCheckDefault
+multiHitFromChi2EDProducerDefault
+--- Registered EDM Plugin: RecoTrackerTkSeedGeneratorPlugins
+>> Leaving Package RecoTracker/TkSeedGenerator
+>> Package RecoTracker/TkSeedGenerator built
+>> Subsystem RecoTracker built
+Copying tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTMTT/src/L1TriggerTrackFindingTMTT/libL1TriggerTrackFindingTMTT.so to productstore area:
+Leaving library rule at L1Trigger/TrackFindingTMTT
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTMTT/plugins/L1TriggerTrackFindingTMTTAuto/libL1TriggerTrackFindingTMTTAuto.so
+>> Building edm plugin tmp/slc7_amd64_gcc820/src/L1Trigger/TrackFindingTracklet/plugins/TrackFindingTrackletPlugins/libTrackFindingTrackletPlugins.so
+--- Registered EDM Plugin: L1TriggerTrackTriggerTests
+>> Leaving Package L1Trigger/TrackTrigger
+>> Package L1Trigger/TrackTrigger built
+--- Registered EDM Plugin: TrackFindingTrackletTests
+Leaving library rule at src/L1Trigger/TrackFindingTracklet/plugins
+@@@@ Running edmWriteConfigs for TrackFindingTrackletPlugins
+--- Registered EDM Plugin: TrackFindingTrackletPlugins
+>> Leaving Package L1Trigger/TrackFindingTracklet
+>> Package L1Trigger/TrackFindingTracklet built
+Leaving library rule at src/L1Trigger/TrackFindingTMTT/plugins
+@@@@ Running edmWriteConfigs for L1TriggerTrackFindingTMTTAuto
+--- Registered EDM Plugin: L1TriggerTrackFindingTMTTAuto
+>> Leaving Package L1Trigger/TrackFindingTMTT
+>> Package L1Trigger/TrackFindingTMTT built
+>> Subsystem L1Trigger built
+gmake[1]: Entering directory '/lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5'
+>> Local Products Rules ..... started
+>> Local Products Rules ..... done
+@@@@ Refreshing Plugins:edmPluginRefresh
+>> Creating project symlinks
+>> Done generating edm plugin poisoned information
+>> Done python_symlink
+>> Compiling python modules cfipython/slc7_amd64_gcc820
+>> Compiling python modules python
+>> Compiling python modules src/L1Trigger/TrackTrigger/python
+>> Compiling python modules src/RecoTracker/CkfPattern/python
+>> Compiling python modules src/Validation/SiOuterTrackerV/python
+>> Compiling python modules src/L1Trigger/TrackFindingTMTT/python
+>> Compiling python modules src/RecoTracker/TkSeedGenerator/python
+>> Compiling python modules src/L1Trigger/TrackFindingTracklet/python
+>> Compiling python modules src/RecoTracker/TrackProducer/python
+>> Compiling python modules src/DQM/SiOuterTracker/python
+>> All python modules compiled
+>> Plugins of all types refreshed.
+gmake[1]: Leaving directory '/lustre/home/adrianodif/L1Tracks/seeding/CMSSW_11_1_0_pre5'

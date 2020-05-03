@@ -52,6 +52,8 @@ private:
   static constexpr float MagConstant =
       CLHEP::c_light / 1.0E3;  //constant is 0.299792458; who knew c_light was in mm/ns?
 
+
+
 public:
   /// Constructors
   TTTrack();
@@ -344,7 +346,11 @@ double TTTrack<T>::chi2Red() const {
 /// Chi2XY reduced
 template <typename T>
 double TTTrack<T>::chi2XYRed() const {
+
   return theChi2_XY_ / (theStubRefs.size() - (theNumFitPars_ - 2));
+
+
+
 }
 
 /// Chi2Z reduced

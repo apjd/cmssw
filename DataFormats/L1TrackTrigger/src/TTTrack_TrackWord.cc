@@ -164,8 +164,11 @@ void TTTrack_TrackWord::setTrackWord(const GlobalVector& Momentum,
 
   //now pack bits; leave hardcoded for now as am example of how this could work
 
+
   seg1 = (itanl << (nWordBits - (NTanlBits + 1)));          // extra bit or bits is for sign //16
   seg2 = (iz0 << (nWordBits - (NTanlBits + NZ0Bits + 2)));  //4
+
+
   seg3 = ichi2XY;
 
   //set bits
@@ -191,9 +194,15 @@ void TTTrack_TrackWord::setTrackWord(const GlobalVector& Momentum,
 
   //third 32-bit word
 
+
   seg1 = (iRinv << (nWordBits - (NCurvBits + 1)));                            //17
   seg2 = (iBendChi2 << (nWordBits - (NCurvBits + NBChi2Bits + 1)));           //14
   seg3 = (ichi2Z << (nWordBits - (NCurvBits + NBChi2Bits + NChi2Bits + 1)));  //10
+
+
+
+
+
   unsigned int seg4 = ispare;
 
   TrackWord3 = seg1 + seg2 + seg3 + seg4;
@@ -201,7 +210,11 @@ void TTTrack_TrackWord::setTrackWord(const GlobalVector& Momentum,
 // unpack
 
 float TTTrack_TrackWord::unpack_itanl() {
+
   unsigned int bits = (TrackWord1 & maskTanL) >> (nWordBits - (NTanlBits + 1));  //16
+
+
+
   float unpTanl = unpack_Signed(bits, NTanlBits, valLSBTanl);
   return unpTanl;
 }
@@ -233,7 +246,11 @@ unsigned int TTTrack_TrackWord::get_z0Bits() {
 }
 
 float TTTrack_TrackWord::unpack_ichi2XY() {
+
   unsigned int bits = (TrackWord1 & maskChi2XY);
+
+
+
   float unpChi2 = chi2Bins[bits];
   return unpChi2;
 }
@@ -315,7 +332,11 @@ unsigned int TTTrack_TrackWord::get_BendChi2Bits() {
 }
 
 float TTTrack_TrackWord::unpack_ichi2Z() {
+
   unsigned int bits = (TrackWord3 & maskChi2Z) >> (nWordBits - (NCurvBits + NBChi2Bits + NChi2Bits + 1));  //10
+
+
+
   float unpChi2Z = chi2ZBins[bits];
   return unpChi2Z;
 }
@@ -326,7 +347,9 @@ float TTTrack_TrackWord::get_ichi2Z() {
 }
 
 unsigned int TTTrack_TrackWord::unpack_ispare() {
+
   unsigned int bits = (TrackWord3 & maskSpare);
+
   return bits;
 }
 

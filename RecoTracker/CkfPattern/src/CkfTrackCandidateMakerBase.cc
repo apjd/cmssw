@@ -264,6 +264,10 @@ namespace cms {
 #endif
 
       std::atomic<unsigned int> ntseed(0);
+
+      LogDebug("CkfPattern") << "CKF" << std::endl;
+      LogDebug("CkfPattern") << "Producer base - " << theMaxNSeeds << std::endl;
+      std::cout << "CkfPattern" << std::endl;
       auto theLoop = [&](size_t ii) {
         auto j = indeces[ii];
 
@@ -520,7 +524,8 @@ namespace cms {
 
       edm::ESHandle<TrackerGeometry> tracker;
       es.get<TrackerDigiGeometryRecord>().get(tracker);
-      LogTrace("CkfPattern|TrackingRegressionTest") << "========== CkfTrackCandidateMaker Info =========="
+      LogDebug("CkfPattern") << "Producer base - " << theMaxNSeeds << std::endl;
+      LogTrace("CkfPattern|TrackingRegressionTest") << "========== CkfTrackCandidateMaker Info ========== " << theMaxNSeeds << " - "
                                                     << "number of Seed: " << collseed->size() << '\n'
                                                     << PrintoutHelper::regressionTest(*tracker, unsmoothedResult);
 
