@@ -31,7 +31,9 @@ namespace gpuPixelRecHits {
 
     auto const digis = *pdigis;  // the copy is intentional!
     auto const& clusters = *pclusters;
-
+    
+    int kk = 0;
+    printf("%d\n",__LINE__);
     // copy average geometry corrected by beamspot . FIXME (move it somewhere else???)
     if (0 == blockIdx.x) {
       auto& agc = hits.averageGeometry();
@@ -51,9 +53,9 @@ namespace gpuPixelRecHits {
         //         printf("endcapZ %f %f\n",agc.endCapZ[0],agc.endCapZ[1]);
       }
     }
-
+    printf("%d\n",__LINE__);
     // to be moved in common namespace...
-    constexpr uint16_t InvId = 9999;  // must be > MaxNumModules
+    constexpr uint16_t InvId = 9999 * 4;  // must be > MaxNumModules
     constexpr int32_t MaxHitsInIter = pixelCPEforGPU::MaxHitsInIter;
 
     using ClusParams = pixelCPEforGPU::ClusParams;
@@ -76,15 +78,15 @@ namespace gpuPixelRecHits {
     }
 #endif
 
-#ifdef GPU_DEBUG
+//#ifdef GPU_DEBUG
     if (me % 100 == 1)
       if (threadIdx.x == 0)
         printf("hitbuilder: %d clusters in module %d. will write at %d\n", nclus, me, clusters.clusModuleStart(me));
-#endif
-
+//#endif
+   printf("%d\n",__LINE__);
     for (int startClus = 0, endClus = nclus; startClus < endClus; startClus += MaxHitsInIter) {
       auto first = clusters.moduleStart(1 + blockIdx.x);
-
+   printf("%d\n",__LINE__);
       int nClusInIter = std::min(MaxHitsInIter, endClus - startClus);
       int lastClus = startClus + nClusInIter;
       assert(nClusInIter <= nclus);
@@ -92,7 +94,7 @@ namespace gpuPixelRecHits {
       assert(lastClus <= nclus);
 
       assert(nclus > MaxHitsInIter || (0 == startClus && nClusInIter == nclus && lastClus == nclus));
-
+   printf("%d\n",__LINE__);
       // init
       for (int ic = threadIdx.x; ic < nClusInIter; ic += blockDim.x) {
         clusParams.minRow[ic] = std::numeric_limits<uint32_t>::max();
@@ -111,7 +113,7 @@ namespace gpuPixelRecHits {
       __syncthreads();
 
       // one thead per "digi"
-
+     printf("%d\n",__LINE__);
       for (int i = first; i < numElements; i += blockDim.x) {
         auto id = digis.moduleInd(i);
         if (id == InvId)
@@ -133,7 +135,7 @@ namespace gpuPixelRecHits {
       }
 
       __syncthreads();
-
+    printf("%d\n",__LINE__);
       for (int i = first; i < numElements; i += blockDim.x) {
         auto id = digis.moduleInd(i);
         if (id == InvId)
@@ -161,7 +163,7 @@ namespace gpuPixelRecHits {
       }
 
       __syncthreads();
-
+printf("%d\n",__LINE__);
       // next one cluster per thread...
 
       first = clusters.clusModuleStart(me) + startClus;
@@ -174,12 +176,12 @@ namespace gpuPixelRecHits {
           break;  // overflow...
         assert(h < hits.nHits());
         assert(h < clusters.clusModuleStart(me + 1));
-
+	
         pixelCPEforGPU::position(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
         pixelCPEforGPU::errorFromDB(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
 
         // store it
-
+printf("%d\n",__LINE__);
         hits.charge(h) = clusParams.charge[ic];
 
         hits.detectorIndex(h) = me;
@@ -193,7 +195,7 @@ namespace gpuPixelRecHits {
 
         hits.xerrLocal(h) = clusParams.xerr[ic] * clusParams.xerr[ic];
         hits.yerrLocal(h) = clusParams.yerr[ic] * clusParams.yerr[ic];
-
+printf("%d\n",__LINE__);
         // keep it local for computations
         float xg, yg, zg;
         // to global and compute phi...

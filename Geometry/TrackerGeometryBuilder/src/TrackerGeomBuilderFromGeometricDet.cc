@@ -151,7 +151,8 @@ void TrackerGeomBuilderFromGeometricDet::buildPixel(
     int BIG_PIX_PER_ROC_X,  // in x direction, rows. BIG_PIX_PER_ROC_X = 0 for SLHC
     int BIG_PIX_PER_ROC_Y)  // in y direction, cols. BIG_PIX_PER_ROC_Y = 0 for SLHC
 {
-  LogDebug("BuildingGeomDetUnits") << " Pixel type. Size of vector: " << gdv.size()
+ // LogDebug("BuildingGeomDetUnits") 
+ std::cout << " Pixel type. Size of vector: " << gdv.size()
                                    << " GeomDetType subdetector: " << det
                                    << " logical subdetector: " << GeomDetEnumerators::subDetGeom[det]
                                    << " big pix per ROC x: " << BIG_PIX_PER_ROC_X << " y: " << BIG_PIX_PER_ROC_Y
@@ -161,9 +162,10 @@ void TrackerGeomBuilderFromGeometricDet::buildPixel(
 
   for (auto i : gdv) {
     std::string const& detName = i->name();
+   
     if (thePixelDetTypeMap.find(detName) == thePixelDetTypeMap.end()) {
       std::unique_ptr<const Bounds> bounds(i->bounds());
-
+      std::cout << i->geographicalID().rawId() << " - " << detName << " - ";
       PixelTopology* t = PixelTopologyBuilder().build(&*bounds,
                                                       upgradeGeometry,
                                                       i->pixROCRows(),

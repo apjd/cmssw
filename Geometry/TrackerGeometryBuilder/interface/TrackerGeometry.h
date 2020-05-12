@@ -5,6 +5,8 @@
 #include "Geometry/CommonDetUnit/interface/GeomDetEnumerators.h"
 #include "Geometry/CommonDetUnit/interface/TrackerGeomDet.h"
 
+
+
 class GeometricDet;
 
 /**
@@ -62,6 +64,7 @@ public:
   const DetIdContainer& detIds() const override { return theDetIds; }
   const TrackerGeomDet* idToDetUnit(DetId) const override;
   const TrackerGeomDet* idToDet(DetId) const override;
+  bool  idToDetUnit(DetId,const TrackerGeomDet&& d) const;
 
   const GeomDetEnumerators::SubDetector geomDetSubDetector(int subdet) const;
   unsigned int numberOfLayers(int subdet) const;
@@ -73,6 +76,8 @@ public:
   void setOffsetDU(SubDetector sid) { theOffsetDU[sid] = detUnits().size(); }
   void setEndsetDU(SubDetector sid) { theEndsetDU[sid] = detUnits().size(); }
   void fillTestMap(const GeometricDet* gd);
+
+  void printInfos(DetId s) const;
 
   ModuleType moduleType(const std::string& name) const;
 

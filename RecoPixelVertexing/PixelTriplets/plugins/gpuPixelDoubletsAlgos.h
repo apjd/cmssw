@@ -73,24 +73,29 @@ namespace gpuPixelDoubletsAlgos {
       ntot = innerLayerCumulativeSize[nPairs - 1];
     }
     __syncthreads();
-
+    
+    for (uint32_t i = 0; i < nPairs; ++i) {
+    printf("innerLayerCumulativeSize %d %d \n",i,innerLayerCumulativeSize[i]);
+    }
     // x runs faster
     auto idy = blockIdx.y * blockDim.y + threadIdx.y;
     auto first = threadIdx.x;
     auto stride = blockDim.x;
-
+    
+    printf("Pairs : %d %d %d \n",nPairs,layerPairs[20],layerPairs[21]);
     uint32_t pairLayerId = 0;  // cannot go backward
     for (auto j = idy; j < ntot; j += blockDim.y * gridDim.y) {
       while (j >= innerLayerCumulativeSize[pairLayerId++])
         ;
       --pairLayerId;  // move to lower_bound ??
-
+      printf("pairLayerId %d \n",pairLayerId);
       assert(pairLayerId < nPairs);
       assert(j < innerLayerCumulativeSize[pairLayerId]);
       assert(0 == pairLayerId || j >= innerLayerCumulativeSize[pairLayerId - 1]);
 
       uint8_t inner = layerPairs[2 * pairLayerId];
       uint8_t outer = layerPairs[2 * pairLayerId + 1];
+      //printf("Layer pair %d %d \n",inner,outer);
       assert(outer > inner);
 
       auto hoff = Hist::histOff(outer);
@@ -98,14 +103,15 @@ namespace gpuPixelDoubletsAlgos {
       auto i = (0 == pairLayerId) ? j : j - innerLayerCumulativeSize[pairLayerId - 1];
       i += offsets[inner];
 
-      // printf("Hit in Layer %d %d %d %d\n", i, inner, pairLayerId, j);
-
+      printf("Hit in Layer %d %d %d %d %d\n", i, inner, outer, pairLayerId, j);
+      
+      printf("345678 %d %.3f %.3f\n", inner, hh.zGlobal(i), hh.rGlobal(i));
       assert(i >= offsets[inner]);
       assert(i < offsets[inner + 1]);
 
       // found hit corresponding to our cuda thread, now do the job
       auto mi = hh.detectorIndex(i);
-      if (mi > 2000)
+      if (mi > 10000)
         continue;  // invalid
 
       /* maybe clever, not effective when zoCut is on
@@ -198,10 +204,11 @@ namespace gpuPixelDoubletsAlgos {
         p += first;
         for (; p < e; p += stride) {
           auto oi = __ldg(p);
+          //printf("oi = %d - offset = %d ",oi,offsets[outer]);
           assert(oi >= offsets[outer]);
           assert(oi < offsets[outer + 1]);
           auto mo = hh.detectorIndex(oi);
-          if (mo > 2000)
+          if (mo > 10000)
             continue;  //    invalid
 
           if (doZ0Cut && z0cutoff(oi))

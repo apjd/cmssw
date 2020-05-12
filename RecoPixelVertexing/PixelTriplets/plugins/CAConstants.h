@@ -22,25 +22,25 @@ namespace CAConstants {
   constexpr uint32_t maxNumberOfTuples() { return 24 * 1024; }
 #endif
 #else
-  constexpr uint32_t maxNumberOfTuples() { return 48 * 1024; }
+  constexpr uint32_t maxNumberOfTuples() { return 32 * 48 * 1024; }
 #endif
   constexpr uint32_t maxNumberOfQuadruplets() { return maxNumberOfTuples(); }
 #ifndef ONLY_PHICUT
 #ifndef GPU_SMALL_EVENTS
-  constexpr uint32_t maxNumberOfDoublets() { return 448 * 1024; }
-  constexpr uint32_t maxCellsPerHit() { return 128; }
+  constexpr uint32_t maxNumberOfDoublets() { return 8 * 448 * 1024; }
+  constexpr uint32_t maxCellsPerHit() { return 8 * 128; }
 #else
   constexpr uint32_t maxNumberOfDoublets() { return 128 * 1024; }
   constexpr uint32_t maxCellsPerHit() { return 128 / 2; }
 #endif
 #else
-  constexpr uint32_t maxNumberOfDoublets() { return 2 * 1024 * 1024; }
-  constexpr uint32_t maxCellsPerHit() { return 8 * 128; }
+  constexpr uint32_t maxNumberOfDoublets() { return 8 * 1024 * 1024; }
+  constexpr uint32_t maxCellsPerHit() { return 32 * 128; }
 #endif
   constexpr uint32_t maxNumOfActiveDoublets() { return maxNumberOfDoublets() / 4; }
 
-  constexpr uint32_t maxNumberOfLayerPairs() { return 20; }
-  constexpr uint32_t maxNumberOfLayers() { return 10; }
+  constexpr uint32_t maxNumberOfLayerPairs() { return 60; }
+  constexpr uint32_t maxNumberOfLayers() { return 30; }
   constexpr uint32_t maxTuples() { return maxNumberOfTuples(); }
 
   // types

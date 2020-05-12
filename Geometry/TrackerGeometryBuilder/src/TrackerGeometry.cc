@@ -10,6 +10,8 @@
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/Utilities/interface/Exception.h"
+#include "DataFormats/SiPixelDetId/interface/PXBDetId.h"
+#include "DataFormats/SiPixelDetId/interface/PXFDetId.h"
 
 #include <algorithm>
 #include <iostream>
@@ -189,6 +191,55 @@ const TrackerGeomDet* TrackerGeometry::idToDetUnit(DetId s) const {
         << "Invalid DetID: no GeomDetUnit associated with raw ID " << s.rawId() << " of subdet ID " << s.subdetId();
   }
 }
+
+void TrackerGeometry::printInfos(DetId s) const{
+          
+          mapIdToDetUnit::const_iterator p = theMapUnit.find(s.rawId());
+          if (p != theMapUnit.end()) 
+	  {
+           
+          const TrackerGeomDet* d = (static_cast<const TrackerGeomDet*>(p->second));
+          
+ 	  auto s = d->surface();
+    	  std::cout<< "Detector - " << d->geographicalId().rawId() << " - "
+          
+          << d->subDetector() << " - "
+          << d->position().x() << " - "
+          << d->position().y() << " - "
+          << d->position().z() << " - "
+          << d->subDetector() << " - "
+          
+          << s.phiSpan().first << " - " << s.phiSpan().second << " - "
+          << s.zSpan().first << " - " << s.zSpan().second << " - "
+          << s.rSpan().first << " - " << s.rSpan().second << " - ";
+        
+           
+          if(d->subDetector()==16)
+          {
+            PXBDetId pxd(d->geographicalId());
+            std::cout << pxd.layer() << " - " << pxd.ladder() << " - " << pxd.module() << std::endl;
+          } else
+          if(d->subDetector()==17)
+          {
+            PXFDetId pxd(d->geographicalId());
+            std::cout << pxd.side() << " - " << pxd.disk() << " - " << pxd.module() << std::endl;
+          }else
+          {
+            std::cout << " 0  - 0 - 0"<<std::endl;
+          }}
+
+}
+
+/*bool TrackerGeometry::idToDetUnit(DetId s,const TrackerGeomDet&& d) const{
+  mapIdToDetUnit::const_iterator p = theMapUnit.find(s.rawId());
+  if (p != theMapUnit.end()) {
+    d = std::move(*static_cast<const TrackerGeomDet*>(p->second));
+    return true;
+  } else {
+    return false; 
+ 
+  }
+}*/
 
 const TrackerGeomDet* TrackerGeometry::idToDet(DetId s) const {
   mapIdToDet::const_iterator p = theMap.find(s.rawId());

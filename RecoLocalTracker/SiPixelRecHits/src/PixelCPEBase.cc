@@ -123,9 +123,10 @@ void PixelCPEBase::fillDetParams() {
 
   auto const& dus = geom_.detUnits();
   unsigned m_detectors = dus.size();
+  std::cout << "PixelCPEBase" << std::endl;
   for (unsigned int i = 1; i < 7; ++i) {
-    LogDebug("PixelCPEBase:: LookingForFirstStrip")
-        << "Subdetector " << i << " GeomDetEnumerator " << GeomDetEnumerators::tkDetEnum[i] << " offset "
+    //LogDebug("PixelCPEBase:: LookingForFirstStrip")
+       std::cout << "Subdetector " << i << " GeomDetEnumerator " << GeomDetEnumerators::tkDetEnum[i] << " offset "
         << geom_.offsetDU(GeomDetEnumerators::tkDetEnum[i]) << " is it strip? "
         << (geom_.offsetDU(GeomDetEnumerators::tkDetEnum[i]) != dus.size()
                 ? dus[geom_.offsetDU(GeomDetEnumerators::tkDetEnum[i])]->type().isOuterTracker()
@@ -138,10 +139,12 @@ void PixelCPEBase::fillDetParams() {
       }
     }
   }
-  LogDebug("LookingForFirstStrip") << " Chosen offset: " << m_detectors;
+  //LogDebug("LookingForFirstStrip") << " Chosen offset: " << m_detectors;
+  std::cout << " Chosen offset: " << m_detectors;
 
   m_DetParams.resize(m_detectors);
   LogDebug("PixelCPEBase::fillDetParams():") << "caching " << m_detectors << " pixel detectors" << endl;
+  std::cout << "caching " << m_detectors << " pixel detectors" << endl;
   for (unsigned i = 0; i != m_detectors; ++i) {
     auto& p = m_DetParams[i];
     p.theDet = dynamic_cast<const PixelGeomDetUnit*>(dus[i]);
