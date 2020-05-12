@@ -11,6 +11,9 @@ from RecoTracker.IterativeTracking.PixelLessStep_cff import *
 from RecoTracker.IterativeTracking.TobTecStep_cff import *
 from RecoTracker.IterativeTracking.JetCoreRegionalStep_cff import *
 
+#l1 tracks
+from Configuration.ProcessModifiers.trackdnn_cff import l1tracking
+
 # Phase1 specific iterations
 from RecoTracker.IterativeTracking.HighPtTripletStep_cff import *
 from RecoTracker.IterativeTracking.DetachedQuadStep_cff import *
@@ -29,7 +32,8 @@ for _eraName, _postfix, _era in _cfg.nonDefaultEras():
     _era.toReplaceWith(iterTrackingEarlyTask, _cfg.createEarlyTask(_eraName, _postfix, globals()))
 iterTrackingEarly = cms.Sequence(iterTrackingEarlyTask)
 
-iterTrackingTask = cms.Task(InitialStepPreSplittingTask,
+iterTrackingTask = cms.Task(
+			                InitialStepPreSplittingTask,
                             trackerClusterCheck,
                             iterTrackingEarlyTask,
                             earlyGeneralTracks,
@@ -39,4 +43,18 @@ iterTrackingTask = cms.Task(InitialStepPreSplittingTask,
                             ConvStepTask,
                             conversionStepTracks
                             )
+
+iterTrackingTaskL1 = cms.Task(L1TracksTask,
+			                InitialStepPreSplittingTask,
+                            trackerClusterCheck,
+                            iterTrackingEarlyTask,
+                            earlyGeneralTracks,
+                            muonSeededStepTask,
+                            preDuplicateMergingGeneralTracks,
+                            generalTracksTask,
+                            ConvStepTask,
+                            conversionStepTracks
+                            )
+
+l1tracking.toReplaceWith(iterTrackingTask,iterTrackingTaskL1)
 iterTracking = cms.Sequence(iterTrackingTask)

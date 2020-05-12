@@ -2,10 +2,18 @@ import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Modifier_tracker_apv_vfp30_2016_cff import tracker_apv_vfp30_2016 as _tracker_apv_vfp30_2016
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
 
+#l1 tracks
+from Configuration.ProcessModifiers.trackdnn_cff import l1tracking
+
 #for dnn classifier
 from Configuration.ProcessModifiers.trackdnn_cff import trackdnn
 
 ### STEP 0 ###
+
+initialStepClusters = _cfg.clusterRemoverForIter("InitialStep")
+for _eraName, _postfix, _era in _cfg.nonDefaultEras():
+    _era.toReplaceWith(initialStepClusters, _cfg.clusterRemoverForIter("InitialStep", _eraName, _postfix))
+
 
 # hit building
 from RecoLocalTracker.SiPixelRecHits.PixelCPEESProducers_cff import *
@@ -222,8 +230,12 @@ initialStepTrackCandidates = RecoTracker.CkfPattern.CkfTrackCandidates_cfi.ckfTr
     TrajectoryBuilderPSet = cms.PSet(refToPSet_ = cms.string('initialStepTrajectoryBuilder')),
     doSeedingRegionRebuilding = True,
     useHitsSplitting = True
+
     )
 
+l1tracking.toModify(initialStepTrackCandidates,
+    phase2clustersToSkip = cms.InputTag("initialStepClusters")
+    )
 from Configuration.ProcessModifiers.trackingMkFit_cff import trackingMkFit
 import RecoTracker.MkFit.mkFitInputConverter_cfi as mkFitInputConverter_cfi
 import RecoTracker.MkFit.mkFitProducer_cfi as mkFitProducer_cfi
@@ -322,7 +334,7 @@ trackdnn.toReplaceWith(initialStep, TrackLwtnnClassifier.clone(
 ))
 (trackdnn & fastSim).toModify(initialStep,vertices = "firstStepPrimaryVerticesBeforeMixing")
 
-pp_on_AA_2018.toModify(initialStep, 
+pp_on_AA_2018.toModify(initialStep,
         mva = dict(GBRForestLabel = 'HIMVASelectorInitialStep_Phase1'),
         qualityCuts = [-0.9, -0.5, 0.2],
 )
@@ -380,7 +392,7 @@ trackingPhase2PU140.toModify(initialStepSelector,
             name = 'initialStep',
             preFilterName = 'initialStepTight',
             min_eta = -4.1,
-            max_eta = 4.1,            
+            max_eta = 4.1,
             chi2n_par = 1.2,
             res_par = ( 0.003, 0.001 ),
             minNumberLayers = 3,

@@ -100,3 +100,31 @@ trackingPhase2PU140.toReplaceWith(earlyGeneralTracks, _trackListMerger.clone(
     makeReKeyedSeeds = cms.untracked.bool(False)
     )
 )
+
+from Configuration.ProcessModifiers.trackdnn_cff import l1tracking
+
+l1tracking.toReplaceWith(earlyGeneralTracks, _trackListMerger.clone(
+    TrackProducers =['hltPhase2L1CtfTracks',
+                     'initialStepTracks',
+                     'highPtTripletStepTracks',
+                     'lowPtQuadStepTracks',
+                     'lowPtTripletStepTracks',
+                     'detachedQuadStepTracks',
+                     'pixelPairStepTracks',
+                    ],
+    hasSelector = [1,1,1,1,1,1,1],
+    indivShareFrac = [1.0,1.0,0.16,0.095,0.09,0.09,0.09],
+    selectedTrackQuals = cms.VInputTag(cms.InputTag("l1Step","l1TracksSelector"),
+                                       cms.InputTag("initialStepSelector","initialStep"),
+                                       cms.InputTag("highPtTripletStepSelector","highPtTripletStep"),
+                                       cms.InputTag("lowPtQuadStepSelector","lowPtQuadStep"),
+                                       cms.InputTag("lowPtTripletStepSelector","lowPtTripletStep"),
+                                       cms.InputTag("detachedQuadStep"),
+                                       cms.InputTag("pixelPairStepSelector","pixelPairStep"),
+                                       ),
+    setsToMerge = cms.VPSet( cms.PSet( tLists=cms.vint32(0,1,2,3,4,5,6), pQual=cms.bool(True) )
+                             ),
+    copyExtras = True,
+    makeReKeyedSeeds = cms.untracked.bool(False)
+    )
+)
