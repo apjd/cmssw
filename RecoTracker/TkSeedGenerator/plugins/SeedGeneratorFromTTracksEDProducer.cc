@@ -67,7 +67,7 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
 							  edm::ESHandle<Chi2MeasurementEstimatorBase>& estimatorH,
 							  unsigned int& numSeedsMade,
 							  std::unique_ptr<std::vector<TrajectorySeed> >& out) const {
-  
+
   //std::cout << "SeedGeneratorFromTTracks::findSeedsOnLayer: Start hitless" << std::endl;
   std::vector<GeometricSearchDet::DetWithState> dets;
   layer.compatibleDetsV(tsosAtIP, propagatorAlong, *estimatorH, dets);
@@ -83,7 +83,7 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
       TrajectorySeed::recHitContainer rHC;
       if(numSeedsMade < 1){ // only outermost seed (?)
 	out->push_back(TrajectorySeed(ptsod, rHC, oppositeToMomentum));
-	//out->push_back(TrajectorySeed( PTrajectoryStateOnDet (localParam, pt, em, detId, 0), 
+	//out->push_back(TrajectorySeed( PTrajectoryStateOnDet (localParam, pt, em, detId, 0),
 	//edm::OwnVector< TrackingRecHit >() , PropagationDirection::alongMomentum));
 	//std::cout << "SeedGeneratorFromTTracks::findSeedsOnLayer: TSOD (Hitless) push seed " << std::endl;
 	numSeedsMade++;
@@ -99,7 +99,7 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
 void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::EventSetup& es) {
   std::cout << "SeedGeneratorFromTTracks::produce start"  << std::endl;
   std::unique_ptr<std::vector<TrajectorySeed> > result(new std::vector<TrajectorySeed>());
-  
+
   // TTrack Collection
   Handle<std::vector< TTTrack< Ref_Phase2TrackerDigi_ > > > trks;
   ev.getByToken(theInputCollectionTag, trks);
@@ -125,7 +125,7 @@ void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::Even
   es.get<TrackingComponentsRecord>().get(thePropagatorName, propagatorOppositeH);
   std::unique_ptr<Propagator> propagatorOpposite = SetPropagationDirection(*propagatorOppositeH, oppositeToMomentum);
 
-  // Get vector of Detector layers 
+  // Get vector of Detector layers
   edm::Handle<MeasurementTrackerEvent> measurementTrackerH;
   ev.getByToken(theMeasurementTrackerTag, measurementTrackerH);
   std::vector<BarrelDetLayer const*> const& tob = measurementTrackerH->geometricSearchTracker()->tobLayers();
@@ -173,7 +173,7 @@ void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::Even
                          *(propagatorAlong.get()),
                          l1,
                          estimatorH,
-			 numSeedsMade,			
+			 numSeedsMade,
                          out);
       }
     }
@@ -210,8 +210,8 @@ void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::Even
       result->push_back(*it);
     }
   } // end loop over L1Tracks
-  
-  //std::cout << "SeedGeneratorFromTTracks::produce: number of seeds made: " << result->size() << std::endl;
+
+  std::cout << "SeedGeneratorFromTTracks::produce: number of seeds made: " << result->size() << std::endl;
   auto const& seeds = *result;
 
   // Test on the fly the seeds
