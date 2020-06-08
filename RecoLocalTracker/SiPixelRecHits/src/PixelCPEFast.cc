@@ -9,10 +9,12 @@
 #include "Geometry/CommonDetUnit/interface/PixelGeomDetUnit.h"
 #include "Geometry/TrackerGeometryBuilder/interface/RectangularPixelTopology.h"
 #include "Geometry/TrackerGeometryBuilder/interface/phase1PixelTopology.h"
+// #include "Geometry/TrackerGeometryBuilder/interface/pixelTopology.h"
 #include "HeterogeneousCore/CUDAUtilities/interface/cudaCheck.h"
 #include "MagneticField/Engine/interface/MagneticField.h"
 #include "RecoLocalTracker/SiPixelRecHits/interface/PixelCPEFast.h"
 
+#define DUMP_ERRORS 1
 // Services
 // this is needed to get errors from templates
 
@@ -45,8 +47,15 @@ PixelCPEFast::PixelCPEFast(edm::ParameterSet const& conf,
           << (*genErrorDBObject_).version();
   }
 
+  isUpgrade_ = conf.getParameter<bool>("Upgrade");
+  // if (conf.getParameter<bool>("Upgrade"))
+  //   isUpgrade_ = true;
+
   // Rechit errors in case other, more correct, errors are not vailable
   // This are constants. Maybe there is a more efficienct way to store them.
+
+  if(!isUpgrade_)
+  {
   xerr_barrel_l1_ = {0.00115, 0.00120, 0.00088};
   xerr_barrel_l1_def_ = 0.01030;
   yerr_barrel_l1_ = {0.00375, 0.00230, 0.00250, 0.00250, 0.00230, 0.00230, 0.00210, 0.00210, 0.00240};
@@ -59,6 +68,22 @@ PixelCPEFast::PixelCPEFast(edm::ParameterSet const& conf,
   xerr_endcap_def_ = 0.0020;
   yerr_endcap_ = {0.00210};
   yerr_endcap_def_ = 0.00075;
+  }else
+  {
+    xerr_barrel_ln_ = {0.00025, 0.00030, 0.00035, 0.00035};
+    xerr_barrel_ln_def_ = 0.00035;
+    yerr_barrel_ln_ = {0.00210, 0.00115, 0.00125};
+    yerr_barrel_ln_def_ = 0.00125;
+    xerr_endcap_ = {0.00072, 0.00025};
+    xerr_endcap_def_ = 0.00060;
+    yerr_endcap_ = {0.00289, 0.00025};
+    yerr_endcap_def_ = 0.00180;
+    xerr_barrel_l1_ = {0.00025, 0.00030, 0.00035, 0.00035};
+    xerr_barrel_l1_def_ = 0.00035;
+    yerr_barrel_l1_ = {0.00210, 0.00115, 0.00125};
+    yerr_barrel_l1_def_ = 0.00125;
+  }
+
 
   fillParamsForGpu();
 
@@ -68,6 +93,7 @@ PixelCPEFast::PixelCPEFast(edm::ParameterSet const& conf,
       &m_layerGeometry,
       &m_averageGeometry,
   };
+
 }
 
 const pixelCPEforGPU::ParamsOnGPU* PixelCPEFast::getGPUProductAsync(cudaStream_t cudaStream) const {
@@ -107,22 +133,28 @@ const pixelCPEforGPU::ParamsOnGPU* PixelCPEFast::getGPUProductAsync(cudaStream_t
 }
 
 void PixelCPEFast::fillParamsForGpu() {
+
+  std::cout << "fillParamsForGpu" << std::endl;
   m_commonParamsGPU.theThicknessB = m_DetParams.front().theThickness;
   m_commonParamsGPU.theThicknessE = m_DetParams.back().theThickness;
   m_commonParamsGPU.thePitchX = m_DetParams[0].thePitchX;
   m_commonParamsGPU.thePitchY = m_DetParams[0].thePitchY;
-
+  m_commonParamsGPU.isUpgrade = isUpgrade_;
+  m_commonParamsGPU.numberOfLaddersInBarrel = isUpgrade_ ? phase2PixelTopology::numberOfLaddersInBarrel : phase1PixelTopology::numberOfLaddersInBarrel;
+  // m_commonParamsGPU.maxModuleStride ==
   // zero average geometry
   memset(&m_averageGeometry, 0, sizeof(pixelCPEforGPU::AverageGeometry));
-
+  std::cout << "average" << std::endl;
   uint32_t oldLayer = 0;
   uint32_t oldLadder = 0;
   float rl = 0;
   float zl = 0;
-  float miz = 90, mxz = 0;
+  float miz = 500, mxz = 0;
   float pl = 0;
   int nl = 0;
   m_detParamsGPU.resize(m_DetParams.size());
+
+  std::cout << "det before" << std::endl;
   for (auto i = 0U; i < m_DetParams.size(); ++i) {
     auto& p = m_DetParams[i];
     auto& g = m_detParamsGPU[i];
@@ -138,6 +170,39 @@ void PixelCPEFast::fillParamsForGpu() {
     g.index = i;  // better be!
     g.rawId = p.theDet->geographicalId();
 
+    if(!isUpgrade_)
+    {
+
+      g.nRowsRoc = 80;
+      g.nColsRoc = 52;
+      g.nRows = 2 * 80;
+      g.nCols = 8 * 52;
+
+      g.numPixsInModule = 2 * 80 * 8 * 52;
+
+      std::cout << g.nRowsRoc << " - "
+                << g.nColsRoc << " - " << g.nRows << " - " << g.nCols << std::endl;
+
+    } else
+    {
+
+
+      g.nRowsRoc = p.theDet->specificTopology().rowsperroc();
+      g.nColsRoc = p.theDet->specificTopology().colsperroc();
+      g.nRows = p.theDet->specificTopology().rocsX() * g.nRowsRoc;
+      g.nCols = p.theDet->specificTopology().rocsY() * g.nColsRoc;
+
+      g.numPixsInModule = g.nRows * g.nCols;
+
+      std::cout << p.theDet->surface().bounds().width() << " - " << p.theDet->surface().bounds().length() << " - "
+                << float(p.theDet->surface().bounds().width()) * 0.125f / m_commonParamsGPU.thePitchX << " - "
+                << float(p.theDet->surface().bounds().length()) * 0.5f / m_commonParamsGPU.thePitchY << " - "
+                << m_commonParamsGPU.thePitchX << " - " << m_commonParamsGPU.thePitchY << " - "
+                << g.nRowsRoc << " - "
+                << g.nColsRoc << " - " << g.nRows << " - " << g.nCols << std::endl;
+
+    }
+
     assert((g.isBarrel ? m_commonParamsGPU.theThicknessB : m_commonParamsGPU.theThicknessE) == p.theThickness);
 
     //if (m_commonParamsGPU.theThickness!=p.theThickness)
@@ -146,18 +211,19 @@ void PixelCPEFast::fillParamsForGpu() {
     auto ladder = ttopo_.pxbLadder(p.theDet->geographicalId());
     if (oldLayer != g.layer) {
       oldLayer = g.layer;
-      // std::cout << "new layer at " << i << (g.isBarrel ? " B  " :  (g.isPosZ ? " E+ " : " E- ")) << g.layer << " starting at " << g.rawId << std::endl;
-      // std::cout << "old layer had " << nl << " ladders" << std::endl;
+      std::cout << "new layer at " << i << (g.isBarrel ? " B  " :  (g.isPosZ ? " E+ " : " E- ")) << g.layer << " starting at " << g.rawId << std::endl;
+      std::cout << "old layer had " << nl << " ladders" << std::endl;
       nl = 0;
     }
     if (oldLadder != ladder) {
       oldLadder = ladder;
-      // std::cout << "new ladder at " << i << (g.isBarrel ? " B  " :  (g.isPosZ ? " E+ " : " E- ")) << ladder << " starting at " << g.rawId << std::endl;
-      // std::cout << "old ladder ave z,r,p mz " << zl/8.f << " " << rl/8.f << " " << pl/8.f  << ' ' << miz << ' ' << mxz << std::endl;
+      std::cout << "new ladder at " << i << (g.isBarrel ? " B  " :  (g.isPosZ ? " E+ " : " E- ")) << ladder << " starting at " << g.rawId << std::endl;
+      std::cout << "old ladder ave z,r,p mz " << zl/8.f << " " << rl/8.f << " " << pl/8.f  << ' ' << miz << ' ' << mxz << std::endl;
       rl = 0;
       zl = 0;
       pl = 0;
-      miz = 90;
+      miz = 500;
+      mxz = 0;
       mxz = 0;
       nl++;
     }
@@ -182,8 +248,10 @@ void PixelCPEFast::fillParamsForGpu() {
     pl += vv.phi();  // (not obvious)
 
     // errors .....
+
     ClusterParamGeneric cp;
-    auto gvx = p.theOrigin.x() + 40.f * m_commonParamsGPU.thePitchX;
+    auto gvx = p.theOrigin.x();
+    gvx = gvx + float(g.nRowsRoc) * 0.5f * m_commonParamsGPU.thePitchX;
     auto gvy = p.theOrigin.y();
     auto gvz = 1.f / p.theOrigin.z();
     //--- Note that the normalization is not required as only the ratio used
@@ -199,8 +267,8 @@ void PixelCPEFast::fillParamsForGpu() {
       lape = LocalError();  // zero....
 
 #ifdef DUMP_ERRORS
-    auto m = 10000.f;
-    for (float qclus = 15000; qclus < 35000; qclus += 15000) {
+    auto m = 1000.f;
+    for (float qclus = 1000; qclus < 10000; qclus += 1000) {
       errorFromTemplates(p, cp, qclus);
 
       std::cout << i << ' ' << qclus << ' ' << cp.pixmx << ' ' << m * cp.sigmax << ' ' << m * cp.sx1 << ' '
@@ -209,7 +277,7 @@ void PixelCPEFast::fillParamsForGpu() {
     std::cout << i << ' ' << m * std::sqrt(lape.xx()) << ' ' << m * std::sqrt(lape.yy()) << std::endl;
 #endif
 
-    errorFromTemplates(p, cp, 20000.f);
+    errorFromTemplates(p, cp, 5000.f);
     g.sx[0] = cp.sigmax;
     g.sx[1] = cp.sx1;
     g.sx[2] = cp.sx2;
@@ -253,36 +321,76 @@ void PixelCPEFast::fillParamsForGpu() {
     }
   }
 
+
+  int numberOfModulesInLadder = isUpgrade_ ? int(phase2PixelTopology::numberOfModulesInLadder) : int(phase1PixelTopology::numberOfModulesInLadder);
+  int numberOfModulesInBarrel = isUpgrade_ ? int(phase2PixelTopology::numberOfModulesInBarrel) : int(phase1PixelTopology::numberOfModulesInBarrel);
+  int numberOfLaddersInBarrel = isUpgrade_ ? int(phase2PixelTopology::numberOfLaddersInBarrel) : int(phase1PixelTopology::numberOfLaddersInBarrel);
+  uint8_t nLayers = isUpgrade_ ? phase2PixelTopology::numberOfLayers : phase1PixelTopology::numberOfLayers;
+  uint32_t nIndex = isUpgrade_ ? phase2PixelTopology::layerIndexSize : phase1PixelTopology::layerIndexSize;
+  std::cout << "numbers" << std::endl;
+
+  std::vector <uint8_t> layer;
+  std::vector <uint32_t> layerStart;
+
+  layer.reserve(nLayers); layerStart.reserve(nIndex);
+
+  if(isUpgrade_)
+  {
+    layerStart.insert(layerStart.end(),
+                      &phase1PixelTopology::layerStart[0],
+                      &phase1PixelTopology::layerStart[nLayers]);
+    layer.insert(layer.end(),
+                 &phase1PixelTopology::layer[0],
+                 &phase1PixelTopology::layer[nIndex]);
+  }
+  else
+  {
+    layerStart.insert(layerStart.end(),
+                      &phase2PixelTopology::layerStart[0],
+                      &phase2PixelTopology::layerStart[nLayers]);
+    layer.insert(layer.end(),
+                 &phase2PixelTopology::layer[0],
+                 &phase2PixelTopology::layer[nIndex]);
+  }
+  std::cout << "layers" << std::endl;
+  int firstEndcapPos = 4, firstEndcapNeg = isUpgrade_ ? 16 : 7;
+
+  float ladderFactor = 1./float(numberOfModulesInLadder);
+
   // compute ladder baricenter (only in global z) for the barrel
   auto& aveGeom = m_averageGeometry;
+  // aveGeom.numberOfLaddersInBarrel = numberOfLaddersInBarrel;
   int il = 0;
-  for (int im = 0, nm = phase1PixelTopology::numberOfModulesInBarrel; im < nm; ++im) {
+  for (int im = 0, nm = numberOfModulesInBarrel; im < nm; ++im) {
     auto const& g = m_detParamsGPU[im];
-    il = im / 8;
-    assert(il < int(phase1PixelTopology::numberOfLaddersInBarrel));
+    il = im / numberOfModulesInLadder;
+    assert(il < int(numberOfLaddersInBarrel));
     auto z = g.frame.z();
-    aveGeom.ladderZ[il] += 0.125f * z;
+    aveGeom.ladderZ[il] += ladderFactor * z;
     aveGeom.ladderMinZ[il] = std::min(aveGeom.ladderMinZ[il], z);
     aveGeom.ladderMaxZ[il] = std::max(aveGeom.ladderMaxZ[il], z);
-    aveGeom.ladderX[il] += 0.125f * g.frame.x();
-    aveGeom.ladderY[il] += 0.125f * g.frame.y();
-    aveGeom.ladderR[il] += 0.125 * sqrt(g.frame.x() * g.frame.x() + g.frame.y() * g.frame.y());
+    aveGeom.ladderX[il] += ladderFactor * g.frame.x();
+    aveGeom.ladderY[il] += ladderFactor * g.frame.y();
+    aveGeom.ladderR[il] += ladderFactor * sqrt(g.frame.x() * g.frame.x() + g.frame.y() * g.frame.y());
   }
-  assert(il + 1 == int(phase1PixelTopology::numberOfLaddersInBarrel));
+  assert(il + 1 == numberOfLaddersInBarrel);
   // add half_module and tollerance
-  constexpr float module_length = 6.7f;
+  // constexpr float module_length = 6.7f;
+  std::cout << "numberOfLaddersInBarrel" << std::endl;
+  float module_length = isUpgrade_ ? 4.345 : 6.7f;
   constexpr float module_tolerance = 0.2f;
-  for (int il = 0, nl = phase1PixelTopology::numberOfLaddersInBarrel; il < nl; ++il) {
+
+  for (int il = 0, nl = numberOfLaddersInBarrel; il < nl; ++il) {
     aveGeom.ladderMinZ[il] -= (0.5f * module_length - module_tolerance);
-    aveGeom.ladderMaxZ[il] += (0.5f * module_length - module_tolerance);
+    aveGeom.ladderMaxZ[il] += (0.5f * module_length + module_tolerance);
   }
 
   // compute "max z" for first layer in endcap (should we restrict to the outermost ring?)
-  for (auto im = phase1PixelTopology::layerStart[4]; im < phase1PixelTopology::layerStart[5]; ++im) {
+  for (auto im = layerStart[firstEndcapPos]; im < layerStart[firstEndcapPos+1]; ++im) {
     auto const& g = m_detParamsGPU[im];
     aveGeom.endCapZ[0] = std::max(aveGeom.endCapZ[0], g.frame.z());
   }
-  for (auto im = phase1PixelTopology::layerStart[7]; im < phase1PixelTopology::layerStart[8]; ++im) {
+  for (auto im = layerStart[firstEndcapNeg]; im < layerStart[firstEndcapNeg+1]; ++im) {
     auto const& g = m_detParamsGPU[im];
     aveGeom.endCapZ[1] = std::min(aveGeom.endCapZ[1], g.frame.z());
   }
@@ -290,17 +398,18 @@ void PixelCPEFast::fillParamsForGpu() {
   aveGeom.endCapZ[0] -= 1.5f;
   aveGeom.endCapZ[1] += 1.5f;
 
-  /*
-  for (int jl=0, nl=phase1PixelTopology::numberOfLaddersInBarrel; jl<nl; ++jl) {
-    std::cout << jl<<':'<<aveGeom.ladderR[jl] << '/'<< std::sqrt(aveGeom.ladderX[jl]*aveGeom.ladderX[jl]+aveGeom.ladderY[jl]*aveGeom.ladderY[jl]) 
+  std::cout << "endcap" << std::endl;
+  for (int jl=0, nl=numberOfLaddersInBarrel; jl<nl; ++jl) {
+    std::cout << jl<<':'<<aveGeom.ladderR[jl] << '/'<< std::sqrt(aveGeom.ladderX[jl]*aveGeom.ladderX[jl]+aveGeom.ladderY[jl]*aveGeom.ladderY[jl])
                    <<','<<aveGeom.ladderZ[jl]<<','<<aveGeom.ladderMinZ[jl]<<','<<aveGeom.ladderMaxZ[jl]<< ' ';
   } std::cout<< std::endl;
   std::cout << aveGeom.endCapZ[0] << ' ' << aveGeom.endCapZ[1] << std::endl;
-  */
+
 
   // fill Layer and ladders geometry
-  memcpy(m_layerGeometry.layerStart, phase1PixelTopology::layerStart, sizeof(phase1PixelTopology::layerStart));
-  memcpy(m_layerGeometry.layer, phase1PixelTopology::layer.data(), phase1PixelTopology::layer.size());
+  memcpy(m_layerGeometry.layerStart, layerStart.data(), layerStart.size());
+  memcpy(m_layerGeometry.layer, layer.data(), layer.size());
+  std::cout << "memcpy" << std::endl;
 }
 
 PixelCPEFast::GPUData::~GPUData() {
@@ -478,8 +587,8 @@ LocalError PixelCPEFast::localError(DetParam const& theDetParam, ClusterParam& t
   int minPixelCol = theClusterParam.theCluster->minPixelCol();
   int minPixelRow = theClusterParam.theCluster->minPixelRow();
 
-  bool edgex = phase1PixelTopology::isEdgeX(minPixelRow) | phase1PixelTopology::isEdgeX(maxPixelRow);
-  bool edgey = phase1PixelTopology::isEdgeY(minPixelCol) | phase1PixelTopology::isEdgeY(maxPixelCol);
+  bool edgex = (minPixelRow==0) | (maxPixelRow==0) | (minPixelRow==theDetParam.theRecTopol->nrows() - 1) | (maxPixelRow==theDetParam.theRecTopol->nrows() - 1);
+  bool edgey = (minPixelCol==0) | (maxPixelCol==0) | (minPixelCol==theDetParam.theRecTopol->ncolumns() - 1) | (maxPixelCol==theDetParam.theRecTopol->ncolumns() - 1);
 
   unsigned int sizex = theClusterParam.theCluster->sizeX();
   unsigned int sizey = theClusterParam.theCluster->sizeY();
@@ -582,4 +691,7 @@ LocalError PixelCPEFast::localError(DetParam const& theDetParam, ClusterParam& t
   return LocalError(xerr_sq, 0, yerr_sq);
 }
 
-void PixelCPEFast::fillPSetDescription(edm::ParameterSetDescription& desc) {}
+void PixelCPEFast::fillPSetDescription(edm::ParameterSetDescription& desc)
+{
+  PixelCPEBase::fillPSetDescription(desc);
+}

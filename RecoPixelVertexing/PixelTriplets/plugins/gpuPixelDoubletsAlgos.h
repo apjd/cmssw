@@ -48,6 +48,7 @@ namespace gpuPixelDoublets {
     constexpr int maxDYPred = 20;
     constexpr float dzdrFact = 8 * 0.0285 / 0.015;  // from dz/dr to "DY"
 
+    printf("gpuDoubletsAlgo \n");
     bool isOuterLadder = ideal_cond;
 
     using Hist = TrackingRecHit2DSOAView::Hist;
