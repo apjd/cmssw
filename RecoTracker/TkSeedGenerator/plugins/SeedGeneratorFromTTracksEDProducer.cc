@@ -55,7 +55,8 @@ SeedGeneratorFromTTracksEDProducer::SeedGeneratorFromTTracksEDProducer(const Par
       theMeasurementTrackerTag(consumes<MeasurementTrackerEvent>(cfg.getParameter<edm::InputTag>("MeasurementTrackerEvent"))),
       theMinEtaForTEC(cfg.getParameter<double>("minEtaForTEC")),
       theMaxEtaForTOB(cfg.getParameter<double>("maxEtaForTOB")),
-      theTrajectoryBuilder(createBaseCkfTrajectoryBuilder(cfg.getParameter<edm::ParameterSet>("TrajectoryBuilderPSet"), consumesCollector()))
+      theTrajectoryBuilder(createBaseCkfTrajectoryBuilder(cfg.getParameter<edm::ParameterSet>("TrajectoryBuilderPSet"), consumesCollector())),
+      errorSFHitless(cfg.getParameter<double>("errorSFHitless"))
 {
   produces<TrajectorySeedCollection>();
 }
@@ -72,6 +73,8 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
   std::vector<GeometricSearchDet::DetWithState> dets;
   layer.compatibleDetsV(tsosAtIP, propagatorAlong, *estimatorH, dets);
 
+
+
   if (!dets.empty()) {
     auto const& detOnLayer = dets.front().first;
     auto const& tsosOnLayer = dets.front().second;
@@ -79,6 +82,9 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
     if (!tsosOnLayer.isValid()) {
       std::cout << "ERROR!: Hitless TSOS is not valid! \n";
     } else {
+
+      dets.front().second.rescaleError(errorSFHitless);
+
       PTrajectoryStateOnDet const& ptsod = trajectoryStateTransform::persistentState(tsosOnLayer, detOnLayer->geographicalId().rawId());
       TrajectorySeed::recHitContainer rHC;
       if(numSeedsMade < 1){ // only outermost seed (?)
@@ -97,7 +103,7 @@ void SeedGeneratorFromTTracksEDProducer::findSeedsOnLayer(const GeometricSearchD
 }
 
 void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::EventSetup& es) {
-  std::cout << "SeedGeneratorFromTTracks::produce start"  << std::endl;
+
   std::unique_ptr<std::vector<TrajectorySeed> > result(new std::vector<TrajectorySeed>());
 
   // TTrack Collection
@@ -211,7 +217,7 @@ void SeedGeneratorFromTTracksEDProducer::produce(edm::Event& ev, const edm::Even
     }
   } // end loop over L1Tracks
 
-  std::cout << "SeedGeneratorFromTTracks::produce: number of seeds made: " << result->size() << std::endl;
+  //std::cout << "SeedGeneratorFromTTracks::produce: number of seeds made: " << result->size() << std::endl;
   auto const& seeds = *result;
 
   // Test on the fly the seeds

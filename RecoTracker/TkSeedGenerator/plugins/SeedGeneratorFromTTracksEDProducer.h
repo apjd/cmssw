@@ -12,7 +12,7 @@
 #include "DataFormats/L1TrackTrigger/interface/TTTrack.h"
 #include "DataFormats/L1TrackTrigger/interface/TTStub.h"
 #include "DataFormats/L1TrackTrigger/interface/TTCluster.h"
-#include "DataFormats/TrajectorySeed/interface/TrajectorySeedCollection.h"    
+#include "DataFormats/TrajectorySeed/interface/TrajectorySeedCollection.h"
 
 #include "Geometry/CommonDetUnit/interface/GlobalTrackingGeometry.h"
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
@@ -65,7 +65,7 @@ public:
 private:
   const edm::ParameterSet theConfig;
   const edm::EDGetTokenT< std::vector< TTTrack< Ref_Phase2TrackerDigi_ > > > theInputCollectionTag;
-  const std::string theEstimatorName;  
+  const std::string theEstimatorName;
   const std::string thePropagatorName;
   const edm::EDGetTokenT<MeasurementTrackerEvent> theMeasurementTrackerTag;
 
@@ -76,6 +76,8 @@ private:
   const double theMaxEtaForTOB;
 
   std::unique_ptr<BaseCkfTrajectoryBuilder> theTrajectoryBuilder;
+
+  const double errorSFHitless;
 
 };
 #endif
