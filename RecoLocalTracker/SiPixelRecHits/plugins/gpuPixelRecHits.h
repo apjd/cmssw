@@ -11,7 +11,7 @@
 #include "HeterogeneousCore/CUDAUtilities/interface/cuda_assert.h"
 #include "RecoLocalTracker/SiPixelRecHits/interface/pixelCPEforGPU.h"
 
-#define GPU_DEBUG 1
+// #define GPU_DEBUG 1
 
 namespace gpuPixelRecHits {
 
@@ -179,7 +179,15 @@ namespace gpuPixelRecHits {
         assert(h < clusters.clusModuleStart(me + 1));
 
         pixelCPEforGPU::position(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
-        pixelCPEforGPU::errorFromDB(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
+
+        if(!cpeParams->commonParams().isUpgrade)
+        {
+          pixelCPEforGPU::errorFromDB(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
+        }
+        else
+        {
+          pixelCPEforGPU::errorFromSize(cpeParams->commonParams(), cpeParams->detParams(me), clusParams, ic);
+        }
 
         // store it
 

@@ -1,4 +1,6 @@
 #include "RecoPixelVertexing/PixelTriplets/plugins/CAHitNtupletGeneratorKernelsImpl.h"
+// #define NTUPLE_DEBUG 1
+// #define DUMP_GPU_TK_TUPLES 1
 
 template <>
 void CAHitNtupletGeneratorKernelsCPU::printCounters(Counters const *counters) {
@@ -37,14 +39,15 @@ void CAHitNtupletGeneratorKernelsCPU::buildDoublets(HitsOnCPU const &hh, cudaStr
     return;  // protect against empty events
 
   // FIXME avoid magic numbers
-  auto nActualPairs = gpuPixelDoublets::nPairs;
-  if (!m_params.includeJumpingForwardDoublets_)
-    nActualPairs = 15;
-  if (m_params.minHitsPerNtuplet_ > 3) {
-    nActualPairs = 13;
+  auto nActualPairs = m_params.upgrade_ ? gpuPixelDoublets::nPairsPhase2 : gpuPixelDoublets::nPairs;
+  if (!m_params.includeJumpingForwardDoublets_ && !m_params.upgrade_)
+    nActualPairs = m_params.upgrade_ ? 35 : 15;
+  if (m_params.minHitsPerNtuplet_ > 3 && !m_params.upgrade_) {
+    nActualPairs = m_params.upgrade_ ? 33 : 13;
   }
 
-  assert(nActualPairs <= gpuPixelDoublets::nPairs);
+  auto maxPairs = m_params.upgrade_ ? gpuPixelDoublets::nPairsPhase2 : gpuPixelDoublets::nPairs;
+  assert(nActualPairs <= maxPairs);
   gpuPixelDoublets::getDoubletsFromHisto(device_theCells_.get(),
                                          device_nCells_,
                                          device_theCellNeighbors_,
@@ -56,7 +59,7 @@ void CAHitNtupletGeneratorKernelsCPU::buildDoublets(HitsOnCPU const &hh, cudaStr
                                          m_params.doClusterCut_,
                                          m_params.doZ0Cut_,
                                          m_params.doPtCut_,
-                                         m_params.maxNumberOfDoublets_);
+                                         m_params.maxNumberOfDoublets_,m_params.upgrade_);
 }
 
 template <>
@@ -98,6 +101,9 @@ void CAHitNtupletGeneratorKernelsCPU::launchKernels(HitsOnCPU const &hh, TkSoA *
         hh.view(), device_theCells_.get(), device_nCells_, device_isOuterHitOfCell_.get(), nhits, false);
   }
 
+  #ifdef NTUPLE_DEBUG
+    std::cout << "building ntuplets from " << *device_nCells_ << " cells" << std::endl;
+  #endif
   kernel_find_ntuplets(hh.view(),
                        device_theCells_.get(),
                        device_nCells_,

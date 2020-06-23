@@ -15,10 +15,10 @@ namespace pixelCPEforGPU {
 class TrackingRecHit2DSOAView {
 public:
   static constexpr uint32_t maxHits() { return gpuClustering::MaxNumClusters; }
-  using hindex_type = uint16_t;  // if above is <=2^16
+  using hindex_type = uint32_t;  // if above is <=2^16
 
   using Hist =
-      cms::cuda::HistoContainer<int16_t, 128, gpuClustering::MaxNumClusters, 8 * sizeof(int16_t), uint16_t, 32>;
+      cms::cuda::HistoContainer<int16_t, 128, gpuClustering::MaxNumClusters, 12 * sizeof(int16_t), uint32_t, 30>;
 
   using AverageGeometry = pixelTopology::AverageGeometry;
 

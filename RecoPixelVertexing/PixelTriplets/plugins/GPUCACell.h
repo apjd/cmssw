@@ -31,7 +31,7 @@ public:
   using Hits = TrackingRecHit2DSOAView;
   using hindex_type = Hits::hindex_type;
 
-  using TmpTuple = cms::cuda::VecArray<uint32_t, 6>;
+  using TmpTuple = cms::cuda::VecArray<uint32_t, 9>;
 
   using HitContainer = pixelTrack::HitContainer;
   using Quality = trackQuality::Quality;
@@ -121,6 +121,7 @@ public:
     auto ro = get_outer_r(hh);
     auto zo = get_outer_z(hh);
 
+    printf("dcaCutOuterTriplet %.2f \n",dcaCutOuterTriplet);
     auto r1 = otherCell.get_inner_r(hh);
     auto z1 = otherCell.get_inner_z(hh);
     auto isBarrel = otherCell.get_outer_detIndex(hh) < last_barrel_detIndex;
@@ -258,7 +259,7 @@ public:
     // than a threshold
 
     tmpNtuplet.push_back_unsafe(theDoubletId);
-    assert(tmpNtuplet.size() <= 4);
+    assert(tmpNtuplet.size() <= 12);
 
     bool last = true;
     for (int j = 0; j < outerNeighbors().size(); ++j) {
@@ -293,7 +294,7 @@ public:
       }
     }
     tmpNtuplet.pop_back();
-    assert(tmpNtuplet.size() < 4);
+    assert(tmpNtuplet.size() < 12);
   }
 
 private:

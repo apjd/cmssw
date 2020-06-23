@@ -71,6 +71,7 @@ CAHitNtupletGeneratorOnGPU::CAHitNtupletGeneratorOnGPU(const edm::ParameterSet& 
                cfg.getParameter<double>("hardCurvCut"),
                cfg.getParameter<double>("dcaCutInnerTriplet"),
                cfg.getParameter<double>("dcaCutOuterTriplet"),
+               cfg.getParameter<bool>("upgrade"),
                makeQualityCuts(cfg.getParameterSet("trackQualityCuts"))) {
 #ifdef DUMP_GPU_TK_TUPLES
   printf("TK: %s %s % %s %s %s %s %s %s %s %s %s %s %s %s %s\n",
@@ -138,6 +139,7 @@ void CAHitNtupletGeneratorOnGPU::fillDescriptions(edm::ParameterSetDescription& 
   desc.add<bool>("doZ0Cut", true);
   desc.add<bool>("doPtCut", true);
   desc.add<bool>("useRiemannFit", false)->setComment("true for Riemann, false for BrokenLine");
+  desc.add<bool>("upgrade",false);
 
   edm::ParameterSetDescription trackQualityCuts;
   trackQualityCuts.add<double>("chi2MaxPt", 10.)->setComment("max pT used to determine the pT-dependent chi2 cut");
@@ -175,8 +177,9 @@ PixelTrackHeterogeneous CAHitNtupletGeneratorOnGPU::makeTuplesAsync(TrackingRecH
 
   kernels.buildDoublets(hits_d, stream);
   kernels.launchKernels(hits_d, soa, stream);
+
   kernels.fillHitDetIndices(hits_d.view(), soa, stream);  // in principle needed only if Hits not "available"
-  if (m_params.useRiemannFit_) {
+  if (m_params.useRiemannFit_ && true) {
     fitter.launchRiemannKernels(hits_d.view(), hits_d.nHits(), CAConstants::maxNumberOfQuadruplets(), stream);
   } else {
     fitter.launchBrokenLineKernels(hits_d.view(), hits_d.nHits(), CAConstants::maxNumberOfQuadruplets(), stream);
@@ -200,6 +203,9 @@ PixelTrackHeterogeneous CAHitNtupletGeneratorOnGPU::makeTuples(TrackingRecHit2DC
   kernels.launchKernels(hits_d, soa, nullptr);
   kernels.fillHitDetIndices(hits_d.view(), soa, nullptr);  // in principle needed only if Hits not "available"
 
+
+
+
   if (0 == hits_d.nHits())
     return tracks;
 
@@ -207,13 +213,47 @@ PixelTrackHeterogeneous CAHitNtupletGeneratorOnGPU::makeTuples(TrackingRecHit2DC
   HelixFitOnGPU fitter(bfield, m_params.fit5as4_);
   fitter.allocateOnGPU(&(soa->hitIndices), kernels.tupleMultiplicity(), soa);
 
-  if (m_params.useRiemannFit_) {
+  if (m_params.useRiemannFit_ || true) {
     fitter.launchRiemannKernelsOnCPU(hits_d.view(), hits_d.nHits(), CAConstants::maxNumberOfQuadruplets());
   } else {
     fitter.launchBrokenLineKernelsOnCPU(hits_d.view(), hits_d.nHits(), CAConstants::maxNumberOfQuadruplets());
   }
 
+  int TRACKS = 0;
+  float maxEta = 0.0;
+  for (size_t i = 0; i < soa->stride(); i++) {
+    //
+    maxEta = std::max(maxEta,fabs(soa->eta[i]));
+
+    if(fabs(soa->eta[i])>3.0)
+    TRACKS++;
+  }
+
+  std::cout << "eta>3: " << TRACKS << " - "<< maxEta<<std::endl;
+
   kernels.classifyTuples(hits_d, soa, nullptr);
+
+  int good = 0, bad = 0, goodeta = 0;
+  for (size_t i = 0; i < soa->stride(); i++) {
+
+    if(soa->nHits(i)>4 && fabs(soa->eta[i])>0)
+    std::cout << i << " "<< soa->eta[i] << " - " << soa->nHits(i)<<std::endl;
+
+    if(soa->quality(i)==trackQuality::bad)
+    bad++;
+    if(soa->quality(i)>1)
+    {
+      good++;
+      if(fabs(soa->eta[i])>3.0)
+      {
+        goodeta ++;
+      }
+    }
+    soa->quality(i)=trackQuality::loose;
+  }
+
+
+  std::cout << "classified: " << good << " - " << goodeta << " - " << bad << std::endl;
 
   return tracks;
 }

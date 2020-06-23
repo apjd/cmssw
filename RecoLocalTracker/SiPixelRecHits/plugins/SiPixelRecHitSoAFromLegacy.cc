@@ -94,7 +94,7 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
   }
   auto const& cpeView = fcpe->getCPUProduct();
   // int nLadd = cpeView.nLadd();
-  std::cout << "CPE Done" << std::endl;
+  // std::cout << "CPE Done" << std::endl;
   const reco::BeamSpot& bs = iEvent.get(bsGetToken_);
 
   BeamSpotCUDA::Data bsHost;
@@ -146,12 +146,16 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
     auto gind = genericDet->index();
     assert(gind < 4000);
     auto const nclus = DSViter->size();
+
     clusInModule_[gind] = nclus;
     numberOfClusters += nclus;
   }
   hitsModuleStart[0] = 0;
   for (int i = 1, n = clusInModule_.size(); i < n; ++i)
+  {
     hitsModuleStart[i] = hitsModuleStart[i - 1] + clusInModule_[i - 1];
+    // std::cout << "module id: "<< i << " - nclus: " << hitsModuleStart[i-1] << " -> "<< hitsModuleStart[i] << " nclus: " << clusInModule_[i - 1]<<std::endl;
+  }
   assert(numberOfClusters == int(hitsModuleStart[4000]));
 
   // output SoA
@@ -161,7 +165,7 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
     iEvent.put(std::move(output));
     if (convert2Legacy_)
     {
-      std::cout << "legacy" << std::endl;
+      // std::cout << "legacy" << std::endl;
       iEvent.put(std::move(legacyOutput));
     }
     return;
@@ -235,7 +239,7 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
     // we run on blockId.x==0
     gpuPixelRecHits::getHits(&cpeView, &bsHost, &digiView, ndigi, &clusterView, output->view());
 
-    std::cout << "getHits output: " << output->view()->nHits() << std::endl;
+    // std::cout << "getHits output: " << output->view()->nHits() << std::endl;
     for (auto h = fc; h < lc; ++h)
       if (h - fc < MaxHitsInModule)
         assert(gind == output->view()->detectorIndex(h));
@@ -248,15 +252,21 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
         if (ih >= MaxHitsInModule)
           break;
         assert(ih < clusterRef.size());
-        std::cout << "hit n." << hh << " - " << output->view()->xLocal(h)
-                  << " - " << output->view()->yLocal(h)
-                  << " - " << output->view()->xerrLocal(h)
-                  << " - " << output->view()->yerrLocal(h) << std::endl;
-              hh++;
+
         LocalPoint lp(output->view()->xLocal(h), output->view()->yLocal(h));
         LocalError le(output->view()->xerrLocal(h), 0, output->view()->yerrLocal(h));
         SiPixelRecHitQuality::QualWordType rqw = 0;
         SiPixelRecHit hit(lp, le, rqw, *genericDet, clusterRef[ih]);
+
+        // std::cout << "hit n." << hh << " - " << output->view()->xLocal(h)
+        //           << " - " << output->view()->yLocal(h)
+        //           << " - " << output->view()->xerrLocal(h)
+        //           << " - " << output->view()->yerrLocal(h)
+        //           << " - " << output->view()->detectorIndex(h)
+        //           << " - " << hit.globalPosition().x() << " - " << hit.globalPosition().y() << " - " << hit.globalPosition().z() << " - "
+        //           << std::endl;
+        hh++;
+
         recHitsOnDetUnit.push_back(hit);
       }
     }
@@ -266,13 +276,17 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
   uint8_t nLayers = isUpgrade_ ? phase2PixelTopology::numberOfLayers : phase1PixelTopology::numberOfLayers;
 
   // fill data structure to support CA
-  for (auto i = 0; i < nLayers+1; ++i) {
+  for (auto i = 0; i < nLayers; ++i) {
+    std::cout << "layer " << i << " - "<< cpeView.layerGeometry().layerStart[i] << " : "
+    << hitsModuleStart[cpeView.layerGeometry().layerStart[i]] << std::endl;
     output->hitsLayerStart()[i] = hitsModuleStart[cpeView.layerGeometry().layerStart[i]];
   }
+  output->hitsLayerStart()[nLayers] = hitsModuleStart[4000];
+
   cms::cuda::fillManyFromVector(
       output->phiBinner(), nullptr, nLayers, output->iphi(), output->hitsLayerStart(), numberOfHits, 256, nullptr);
 
-  std::cout << "created HitSoa for " <<  numberOfClusters << " clusters in " << numberOfDetUnits << " Dets" << std::endl;
+  std::cout << "created " << hh << " HitSoa for " <<  numberOfClusters << " clusters in " << numberOfDetUnits << " Dets " << output->hitsLayerStart()[nLayers] << std::endl;
   iEvent.put(std::move(output));
   if (convert2Legacy_)
     iEvent.put(std::move(legacyOutput));

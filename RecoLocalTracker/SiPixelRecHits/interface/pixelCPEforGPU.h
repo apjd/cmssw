@@ -61,8 +61,9 @@ namespace pixelCPEforGPU {
   using pixelTopology::AverageGeometry;
 
   struct LayerGeometry {
-    uint16_t layerStart[32]; //enough for phase2
+    uint16_t layerStart[28]; //enough for phase2
     uint8_t layer[1024];
+    uint16_t maxModuleStride;
   };
 
 
@@ -80,8 +81,6 @@ namespace pixelCPEforGPU {
     AverageGeometry const* m_averageGeometry;
 
     // const uint8_t nLadd;
-    // const uint8_t maxModuleStride;
-
     constexpr CommonParams const& __restrict__ commonParams() const {
       CommonParams const* __restrict__ l = m_commonParams;
       return *l;
@@ -97,7 +96,7 @@ namespace pixelCPEforGPU {
     // constexpr uint8_t   __restrict__ maxModuleStride() const { return m_averageGeometry->maxModuleStride; }
 
     __device__ uint8_t layer(uint16_t id) const {
-      return __ldg(m_layerGeometry->layer + id / phase1PixelTopology::maxModuleStride);
+      return __ldg(m_layerGeometry->layer + id / m_layerGeometry->maxModuleStride);
     };
   };
 
@@ -326,17 +325,17 @@ namespace pixelCPEforGPU {
                             comParams.isUpgrade? false : phase1PixelTopology::isBigPixY(cp.minCol[ic]),
                             comParams.isUpgrade? false : phase1PixelTopology::isBigPixY(cp.maxCol[ic]));
 
-    if(comParams.isUpgrade || !comParams.isUpgrade)
-    {
-      std::cout << " Positions " << std::endl;
-      std::cout << " minRow "<< llx << " - minCol" <<  lly<< std::endl;
-      std::cout << " maxRow "<< urx << " - maxCol " <<  ury<< std::endl;
-      std::cout << " minRowL "<< llxl << " - minColL" <<  llyl<< std::endl;
-      std::cout << " maxRowL "<< urxl << " - maxColL " <<  uryl<< std::endl;
-      std::cout << detParams.nRowsRoc-1 << " - " << detParams.nRowsRoc << std::endl;
-      std::cout << detParams.shiftX << " - " << comParams.thePitchX << " - " << (50.f * float(mx) - float(xoff)) << " - " << float(mx)*0.5f << " - " << float(xoff) << "\n";
-      std::cout << detParams.shiftY << " - " << comParams.thePitchY << " - " << (50.f * float(my) - float(yoff)) << " - " << float(my)*0.5f << " - " << float(yoff) << "\n";
-    }
+    // if(comParams.isUpgrade || !comParams.isUpgrade)
+    // {
+    //   std::cout << " Positions " << std::endl;
+    //   std::cout << " minRow "<< llx << " - minCol" <<  lly<< std::endl;
+    //   std::cout << " maxRow "<< urx << " - maxCol " <<  ury<< std::endl;
+    //   std::cout << " minRowL "<< llxl << " - minColL" <<  llyl<< std::endl;
+    //   std::cout << " maxRowL "<< urxl << " - maxColL " <<  uryl<< std::endl;
+    //   std::cout << detParams.nRowsRoc-1 << " - " << detParams.nRowsRoc << std::endl;
+    //   std::cout << detParams.shiftX << " - " << comParams.thePitchX << " - " << (50.f * float(mx) - float(xoff)) << " - " << float(mx)*0.5f << " - " << float(xoff) << "\n";
+    //   std::cout << detParams.shiftY << " - " << comParams.thePitchY << " - " << (50.f * float(my) - float(yoff)) << " - " << float(my)*0.5f << " - " << float(yoff) << "\n";
+    // }
     cp.xpos[ic] = xPos + xcorr;
     cp.ypos[ic] = yPos + ycorr;
   }

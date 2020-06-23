@@ -36,7 +36,7 @@
 
 /**
  * This class creates "leagcy"  reco::Track
- * objects from the output of SoA CA. 
+ * objects from the output of SoA CA.
  */
 class PixelTrackProducerFromSoA : public edm::global::EDProducer<> {
 public:
@@ -147,7 +147,7 @@ void PixelTrackProducerFromSoA::produce(edm::StreamID streamID,
       break;  // this is a guard: maybe we need to move to nTracks...
     indToEdm.push_back(-1);
     auto q = quality[it];
-    if (q != trackQuality::loose)
+    if (q == trackQuality::bad)
       continue;  // FIXME
     if (nHits < minNumberOfHits_)
       continue;
@@ -157,8 +157,13 @@ void PixelTrackProducerFromSoA::produce(edm::StreamID streamID,
     hits.resize(nHits);
     auto b = hitIndices.begin(it);
     for (int iHit = 0; iHit < nHits; ++iHit)
+    {
       hits[iHit] = hitmap[*(b + iHit)];
-
+      // std::cout << hits[iHit]->globalPosition().x() << " - "
+      //           << hits[iHit]->globalPosition().y() << " - "
+      //           << hits[iHit]->globalPosition().z() << " - ";
+    }
+    // std::cout << std::endl;
     // mind: this values are respect the beamspot!
 
     float chi2 = tsoa.chi2(it);

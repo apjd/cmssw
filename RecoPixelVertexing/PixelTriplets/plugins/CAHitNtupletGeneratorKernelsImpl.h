@@ -2,7 +2,7 @@
 // Original Author: Felice Pantaleo, CERN
 //
 
-// #define NTUPLE_DEBUG
+// #define NTUPLE_DEBUG 1
 
 #include <cmath>
 #include <cstdint>
@@ -203,6 +203,17 @@ __global__ void kernel_connect(cms::cuda::AtomicPairCounter *apc1,
                                float dcaCutOuterTriplet) {
   auto const &hh = *hhp;
 
+  // dcaCutOuterTriplet = 0.5;
+  // hardCurvCut = 1.0;
+  // CAThetaCutForward = 9999.9;
+  // CAThetaCutForward = 0.07;
+  // hardCurvCut = 0.01;
+  // ptmin = 0.1;
+  printf("dcaCutOuterTriplet %.4f \n",dcaCutOuterTriplet);
+  printf("CAThetaCutForward %.4f \n",CAThetaCutForward);
+  printf("hardCurvCut %.4f \n",hardCurvCut);
+
+  // printf("connect %d\n",*nCells);
   auto firstCellIndex = threadIdx.y + blockIdx.y * blockDim.y;
   auto first = threadIdx.x;
   auto stride = blockDim.x;
@@ -221,16 +232,17 @@ __global__ void kernel_connect(cms::cuda::AtomicPairCounter *apc1,
     int numberOfPossibleNeighbors = isOuterHitOfCell[innerHitId].size();
     auto vi = isOuterHitOfCell[innerHitId].data();
 
-    constexpr uint32_t last_bpix1_detIndex = 96;
-    constexpr uint32_t last_barrel_detIndex = 1184;
+    constexpr uint32_t last_bpix1_detIndex = 108;//96;
+    constexpr uint32_t last_barrel_detIndex = 756;//1184;
     auto ri = thisCell.get_inner_r(hh);
     auto zi = thisCell.get_inner_z(hh);
 
     auto ro = thisCell.get_outer_r(hh);
     auto zo = thisCell.get_outer_z(hh);
     auto isBarrel = thisCell.get_inner_detIndex(hh) < last_barrel_detIndex;
-
+    // printf("%d %d %.2f %.2f %.2f %.2f %d %d \n",idx,innerHitId,ri,zi,ro,zo,isBarrel,numberOfPossibleNeighbors);
     for (int j = first; j < numberOfPossibleNeighbors; j += stride) {
+
       auto otherCell = __ldg(vi + j);
       auto &oc = cells[otherCell];
       // if (cells[otherCell].theDoubletId < 0 ||
@@ -239,6 +251,7 @@ __global__ void kernel_connect(cms::cuda::AtomicPairCounter *apc1,
       auto r1 = oc.get_inner_r(hh);
       auto z1 = oc.get_inner_z(hh);
       // auto isBarrel = oc.get_outer_detIndex(hh) < last_barrel_detIndex;
+      // printf("%d %d %.2f %.2f %.2f %.2f %.2f %.2f \n",idx,j,r1,z1,ro,zo,ri,zi);
       bool aligned = GPUCACell::areAlignedRZ(
           r1,
           z1,
@@ -248,11 +261,13 @@ __global__ void kernel_connect(cms::cuda::AtomicPairCounter *apc1,
           zo,
           ptmin,
           isBarrel ? CAThetaCutBarrel : CAThetaCutForward);  // 2.f*thetaCut); // FIXME tune cuts
+
       if (aligned &&
           thisCell.dcaCut(hh,
                           oc,
                           oc.get_inner_detIndex(hh) < last_bpix1_detIndex ? dcaCutInnerTriplet : dcaCutOuterTriplet,
-                          hardCurvCut)) {  // FIXME tune cuts
+                          hardCurvCut) || !isBarrel)
+                          if(aligned){  // FIXME tune cuts
         oc.addOuterNeighbor(cellIndex, *cellNeighbors);
         thisCell.theUsed |= 1;
         oc.theUsed |= 1;
@@ -280,10 +295,11 @@ __global__ void kernel_find_ntuplets(GPUCACell::Hits const *__restrict__ hhp,
 
     auto pid = thisCell.theLayerPairId;
     auto doit = minHitsPerNtuplet > 3 ? pid < 3 : pid < 8 || pid > 12;
+    doit = pid < 14;
     if (doit) {
       GPUCACell::TmpTuple stack;
       stack.reset();
-      thisCell.find_ntuplets(hh, cells, *cellTracks, *foundNtuplets, *apc, quality, stack, minHitsPerNtuplet, pid < 3);
+      thisCell.find_ntuplets(hh, cells, *cellTracks, *foundNtuplets, *apc, quality, stack, minHitsPerNtuplet, pid < 12);
       assert(stack.empty());
       // printf("in %d found quadruplets: %d\n", cellIndex, apc->get());
     }
@@ -313,9 +329,9 @@ __global__ void kernel_countMultiplicity(HitContainer const *__restrict__ foundN
     if (quality[it] == trackQuality::dup)
       continue;
     assert(quality[it] == trackQuality::bad);
-    if (nhits > 5)
+    if (nhits > 10)
       printf("wrong mult %d %d\n", it, nhits);
-    assert(nhits < 8);
+    assert(nhits < 12);
     tupleMultiplicity->countDirect(nhits);
   }
 }
@@ -331,9 +347,9 @@ __global__ void kernel_fillMultiplicity(HitContainer const *__restrict__ foundNt
     if (quality[it] == trackQuality::dup)
       continue;
     assert(quality[it] == trackQuality::bad);
-    if (nhits > 5)
+    if (nhits > 10)
       printf("wrong mult %d %d\n", it, nhits);
-    assert(nhits < 8);
+    assert(nhits < 12);
     tupleMultiplicity->fillDirect(nhits, it);
   }
 }
@@ -380,15 +396,15 @@ __global__ void kernel_classifyTracks(HitContainer const *__restrict__ tuples,
     float chi2Cut = cuts.chi2Scale *
                     (cuts.chi2Coeff[0] + pt * (cuts.chi2Coeff[1] + pt * (cuts.chi2Coeff[2] + pt * cuts.chi2Coeff[3])));
     // above number were for Quads not normalized so for the time being just multiple by ndof for Quads  (triplets to be understood)
-    if (3.f * tracks->chi2(it) >= chi2Cut) {
-#ifdef NTUPLE_DEBUG
-      printf("Bad fit %d size %d pt %f eta %f chi2 %f\n",
+    if (tracks->chi2(it) >= 20.f *chi2Cut) {
+// #ifdef NTUPLE_DEBUG
+      printf("Bad fit %d size %d pt %f eta %f chi2 %f > %.2f\n",
              it,
              tuples->size(it),
              tracks->pt(it),
              tracks->eta(it),
-             3.f * tracks->chi2(it));
-#endif
+             3.f * tracks->chi2(it),chi2Cut);
+// #endifs
       continue;
     }
 
@@ -398,7 +414,7 @@ __global__ void kernel_classifyTracks(HitContainer const *__restrict__ tuples,
     //   - for quadruplets: |Tip| < 0.5 cm, pT > 0.3 GeV, |Zip| < 12.0 cm
     // (see CAHitNtupletGeneratorGPU.cc)
     auto const &region = (nhits > 3) ? cuts.quadruplet : cuts.triplet;
-    bool isOk = (std::abs(tracks->tip(it)) < region.maxTip) and (tracks->pt(it) > region.minPt) and
+    bool isOk = (std::abs(tracks->tip(it)) < region.maxTip) and (tracks->pt(it) >  region.minPt) and
                 (std::abs(tracks->zip(it)) < region.maxZip);
 
     if (isOk)
@@ -459,6 +475,7 @@ __global__ void kernel_fillHitDetIndices(HitContainer const *__restrict__ tuples
   auto const &hh = *hhp;
   auto nhits = hh.nHits();
   for (int idx = first, ntot = tuples->size(); idx < ntot; idx += gridDim.x * blockDim.x) {
+
     assert(tuples->bins[idx] < nhits);
     hitDetIndices->bins[idx] = hh.detectorIndex(tuples->bins[idx]);
   }

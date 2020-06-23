@@ -164,7 +164,7 @@ void TrackerGeomBuilderFromGeometricDet::buildPixel(
     if (thePixelDetTypeMap.find(detName) == thePixelDetTypeMap.end()) {
       std::unique_ptr<const Bounds> bounds(i->bounds());
 
-      std::cout <<"BUILDER - " << detName << " - " << i->geographicalId().rawId();
+//      std::cout <<"BUILDER - " << detName << " - " << i->geographicalId().rawId();
 
       PixelTopology* t = PixelTopologyBuilder().build(&*bounds,
                                                       upgradeGeometry,

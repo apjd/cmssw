@@ -184,7 +184,7 @@ LocalPoint RectangularPixelTopology::localPosition(const MeasurementPoint& mp) c
 
   float lpY = localY(mpy);
   float lpX = localX(mpx);
-  std::cout << "legacy"<< mp.x() << " - " << mp.y() << " - " << lpX << " - " << lpY << std::endl;
+  // std::cout << "legacy"<< mp.x() << " - " << mp.y() << " - " << lpX << " - " << lpY << std::endl;
   // Return it as a LocalPoint
   return LocalPoint(lpX, lpY);
 }
@@ -233,8 +233,8 @@ float RectangularPixelTopology::localX(const float mpx) const {
 
   // The final position in local coordinates
 
-  std::cout << "local x : " << binoffx << " - " << local_pitchx << " - "
-            << m_xoffset << " - " << fractionX << " - " << m_pitchx << std::endl;
+  // std::cout << "local x : " << binoffx << " - " << local_pitchx << " - "
+  //           << m_xoffset << " - " << fractionX << " - " << m_pitchx << std::endl;
 
   float lpX = float(binoffx * m_pitchx) + fractionX * local_pitchx + m_xoffset;
 
@@ -282,8 +282,8 @@ float RectangularPixelTopology::localY(const float mpy) const {
 
   // The final position in local coordinates
 
-  std::cout << "local y : " << binoffy << " - " << local_pitchy << " - "
-            << m_yoffset << " - " << fractionY << " - " << m_pitchy << std::endl;
+  // std::cout << "local y : " << binoffy << " - " << local_pitchy << " - "
+  //           << m_yoffset << " - " << fractionY << " - " << m_pitchy << std::endl;
 
   float lpY = float(binoffy * m_pitchy) + fractionY * local_pitchy + m_yoffset;
 #ifdef EDM_ML_DEBUG
