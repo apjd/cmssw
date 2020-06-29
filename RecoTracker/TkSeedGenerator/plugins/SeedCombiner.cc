@@ -67,11 +67,13 @@ void SeedCombiner::produce(edm::Event& ev, const edm::EventSetup& es) {
       ClusterRemovalRefSetter refSetter(ev, clusterRemovalTokens_[iSC]);
 
       for (TrajectorySeedCollection::const_iterator iS = collection->begin(); iS != collection->end(); ++iS) {
-        TrajectorySeed::RecHitContainer newRecHitContainer;
+        TrajectorySeed::recHitContainer newRecHitContainer;
         newRecHitContainer.reserve(iS->nHits());
+        TrajectorySeed::const_iterator iH = iS->recHits().first;
+        TrajectorySeed::const_iterator iH_end = iS->recHits().second;
         //loop seed rechits, copy over and rekey.
-        for (auto const& recHit : iS->recHits()) {
-          newRecHitContainer.push_back(recHit);
+        for (; iH != iH_end; ++iH) {
+          newRecHitContainer.push_back(*iH);
           refSetter.reKey(&newRecHitContainer.back());
         }
         result->push_back(TrajectorySeed(iS->startingState(), std::move(newRecHitContainer), iS->direction()));
