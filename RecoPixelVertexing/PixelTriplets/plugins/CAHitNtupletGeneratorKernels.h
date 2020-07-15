@@ -35,6 +35,7 @@ namespace cAHitNtupletGenerator {
 
   struct QualityCuts {
     // chi2 cut = chi2Scale * (chi2Coeff[0] + pT/GeV * (chi2Coeff[1] + pT/GeV * (chi2Coeff[2] + pT/GeV * chi2Coeff[3])))
+    
     float chi2Coeff[4];
     float chi2MaxPt;  // GeV
     float chi2Scale;
@@ -70,7 +71,7 @@ namespace cAHitNtupletGenerator {
            float hardCurvCut,
            float dcaCutInnerTriplet,
            float dcaCutOuterTriplet,
-           bool upgrade,
+           bool isUpgrade,
            QualityCuts const& cuts)
         : onGPU_(onGPU),
           minHitsPerNtuplet_(minHitsPerNtuplet),
@@ -91,7 +92,7 @@ namespace cAHitNtupletGenerator {
           hardCurvCut_(hardCurvCut),
           dcaCutInnerTriplet_(dcaCutInnerTriplet),
           dcaCutOuterTriplet_(dcaCutOuterTriplet),
-          upgrade_(upgrade),
+          isUpgrade_(isUpgrade),
           cuts_(cuts) {}
 
     const bool onGPU_;
@@ -113,7 +114,7 @@ namespace cAHitNtupletGenerator {
     const float hardCurvCut_;
     const float dcaCutInnerTriplet_;
     const float dcaCutOuterTriplet_;
-    const bool upgrade_;
+    const bool isUpgrade_;
 
     // quality cuts
     QualityCuts cuts_{// polynomial coefficients for the pT-dependent chi2 cut

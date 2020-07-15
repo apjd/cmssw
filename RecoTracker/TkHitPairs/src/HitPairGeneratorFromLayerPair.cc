@@ -176,9 +176,9 @@ void HitPairGeneratorFromLayerPair::doublets(const TrackingRegion& region,
           edm::LogError("TooManyPairs") << "number of pairs exceed maximum, no pairs produced";
           return;
         }
-        std::cout << "layers " << innerHitDetLayer.seqNum()  << " " << outerHitDetLayer.seqNum() << std::endl;
-        std::cout << innerHitsMap.x[b+i] << " - " << innerHitsMap.y[b+i] << " - " << innerHitsMap.z[b+i]
-                  << outerHitsMap.x[io]  <<  " - " << outerHitsMap.y[io]  <<  " - "<< outerHitsMap.z[io] << std::endl;
+        // std::cout << "Doublet " << innerHitDetLayer.seqNum()  << " " << outerHitDetLayer.seqNum() << " "
+        //           << innerHitsMap.x[b+i] << " - " << innerHitsMap.y[b+i] << " - " << innerHitsMap.z[b+i]
+        //           << outerHitsMap.x[io]  <<  " - " << outerHitsMap.y[io]  <<  " - "<< outerHitsMap.z[io] << std::endl;
         result.add(b + i, io);
       }
     }

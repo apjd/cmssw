@@ -1,5 +1,5 @@
 #include "RecoPixelVertexing/PixelTriplets/plugins/CAHitNtupletGeneratorKernelsImpl.h"
-#define DUMP_GPU_TK_TUPLES 1
+
 template <>
 void CAHitNtupletGeneratorKernelsGPU::fillHitDetIndices(HitsView const *hv, TkSoA *tracks_d, cudaStream_t cudaStream) {
   auto blockSize = 128;
@@ -210,7 +210,7 @@ void CAHitNtupletGeneratorKernelsGPU::buildDoublets(HitsOnCPU const &hh, cudaStr
                                                                     m_params.doClusterCut_,
                                                                     m_params.doZ0Cut_,
                                                                     m_params.doPtCut_,
-                                                                    m_params.maxNumberOfDoublets_,m_params.upgrade_);
+                                                                    m_params.maxNumberOfDoublets_,m_params.isUpgrade_);
   cudaCheck(cudaGetLastError());
 
 #ifdef GPU_DEBUG

@@ -258,15 +258,16 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
         SiPixelRecHitQuality::QualWordType rqw = 0;
         SiPixelRecHit hit(lp, le, rqw, *genericDet, clusterRef[ih]);
 
-        // std::cout << "hit n." << hh << " - " << output->view()->xLocal(h)
-        //           << " - " << output->view()->yLocal(h)
-        //           << " - " << output->view()->xerrLocal(h)
-        //           << " - " << output->view()->yerrLocal(h)
-        //           << " - " << output->view()->detectorIndex(h)
-        //           << " - " << hit.globalPosition().x() << " - " << hit.globalPosition().y() << " - " << hit.globalPosition().z() << " - "
-        //           << std::endl;
+        #ifdef PHASE2DEBUG
+        std::cout << "hit n." << hh << " - " << output->view()->xLocal(h)
+                  << " - " << output->view()->yLocal(h)
+                  << " - " << output->view()->xerrLocal(h)
+                  << " - " << output->view()->yerrLocal(h)
+                  << " - " << output->view()->detectorIndex(h)
+                  << " - " << hit.globalPosition().x() << " - " << hit.globalPosition().y() << " - " << hit.globalPosition().z() << " - "
+                  << std::endl;
         hh++;
-
+        #endif
         recHitsOnDetUnit.push_back(hit);
       }
     }
@@ -276,17 +277,21 @@ void SiPixelRecHitSoAFromLegacy::produce(edm::StreamID streamID, edm::Event& iEv
   uint8_t nLayers = isUpgrade_ ? phase2PixelTopology::numberOfLayers : phase1PixelTopology::numberOfLayers;
 
   // fill data structure to support CA
+
   for (auto i = 0; i < nLayers; ++i) {
+    #ifdef PHASE2DEBUG
     std::cout << "layer " << i << " - "<< cpeView.layerGeometry().layerStart[i] << " : "
     << hitsModuleStart[cpeView.layerGeometry().layerStart[i]] << std::endl;
+    #endif
     output->hitsLayerStart()[i] = hitsModuleStart[cpeView.layerGeometry().layerStart[i]];
   }
   output->hitsLayerStart()[nLayers] = hitsModuleStart[4000];
 
   cms::cuda::fillManyFromVector(
-      output->phiBinner(), nullptr, nLayers, output->iphi(), output->hitsLayerStart(), numberOfHits, 256, nullptr);
-
+      output->phiBinner(), nullptr, nLayers, output->iphi(), output->hitsLayerStart(), numberOfHits, 128, nullptr);
+  #ifdef PHASE2DEBUG
   std::cout << "created " << hh << " HitSoa for " <<  numberOfClusters << " clusters in " << numberOfDetUnits << " Dets " << output->hitsLayerStart()[nLayers] << std::endl;
+  #endif
   iEvent.put(std::move(output));
   if (convert2Legacy_)
     iEvent.put(std::move(legacyOutput));

@@ -18,7 +18,7 @@ public:
   using hindex_type = uint32_t;  // if above is <=2^16
 
   using Hist =
-      cms::cuda::HistoContainer<int16_t, 128, gpuClustering::MaxNumClusters, 12 * sizeof(int16_t), uint32_t, 30>;
+      cms::cuda::HistoContainer<int16_t, 128, gpuClustering::MaxNumClusters, 8  * sizeof(int16_t), uint32_t, 32>;
 
   using AverageGeometry = pixelTopology::AverageGeometry;
 

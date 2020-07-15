@@ -1072,15 +1072,14 @@ void MultiTrackValidator::dqmAnalyze(const edm::Event& event,
               break;
             }
           }
-          LogTrace("TrackValidator")
-          //std::cout << "reco::Track #" << rT << " with pt=" << track->pt() << " with eta=" << track->eta()
-                                     << " associated with quality:" << tp.begin()->second << "\n";
+          // LogTrace("TrackValidator")
+          // std::cout << "reco::Track #" << rT << " with pt=" << track->pt() << " with eta=" << track->eta()
+                                     // << " associated with quality:" << tp.begin()->second << "\n";
         } else {
-          LogTrace("TrackValidator")
-          //std::cout << "reco::Track #" 
-          << rT << " with pt=" << track->pt() << " with eta=" << track->eta()
-                                     << " NOT associated to any TrackingParticle"
-                                     << "\n";
+          // LogTrace("TrackValidator")
+          // std::cout << "reco::Track #" << rT << " with pt=" << track->pt() << " with eta=" << track->eta()
+                                     // << " NOT associated to any TrackingParticle"
+                                     // << "\n";
         }
 
         // set MVA values for this track

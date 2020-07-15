@@ -164,10 +164,10 @@ namespace cms {
 
         SiPixelRecHit hit(lp, le, rqw, *genericDet, cluster);
 
-        std::cout << "hit n." << h << " - " << lp.x() << " - " << lp.y() << " - " << lp.z()
-                  << " - " << le.xx() << " - " << le.xy() << " - " << le.yy()
-                  << " - " << hit.globalPosition().x() << " - " << hit.globalPosition().y() << " - " << hit.globalPosition().z() << " - "
-                  << std::endl;
+        // std::cout << "hit n." << h << " - " << lp.x() << " - " << lp.y() << " - " << lp.z()
+        //           << " - " << le.xx() << " - " << le.xy() << " - " << le.yy()
+        //           << " - " << hit.globalPosition().x() << " - " << hit.globalPosition().y() << " - " << hit.globalPosition().z() << " - "
+        //           << std::endl;
       h++;
 
         //

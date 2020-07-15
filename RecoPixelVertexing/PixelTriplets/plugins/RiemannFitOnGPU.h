@@ -2,9 +2,6 @@
 // Author: Felice Pantaleo, CERN
 //
 
-// #define RFIT_DEBUG 1
-// #define RIEMANN_DEBUG 1
-
 #include <cstdint>
 
 #include <cuda_runtime.h>
@@ -48,9 +45,7 @@ __global__ void kernelFastFit(Tuples const *__restrict__ foundNtuplets,
 
   for (int local_idx = local_start, nt = Rfit::maxNumberOfConcurrentFits(); local_idx < nt;
        local_idx += gridDim.x * blockDim.x) {
-
     auto tuple_idx = local_idx + offset;
-
     if (tuple_idx >= tupleMultiplicity->size(nHits))
       break;
 
@@ -58,7 +53,6 @@ __global__ void kernelFastFit(Tuples const *__restrict__ foundNtuplets,
     auto tkid = *(tupleMultiplicity->begin(nHits) + tuple_idx);
     assert(tkid < foundNtuplets->nbins());
 
-    // printf("%d %d \n",int(foundNtuplets->size(tkid)),nHits);
     assert(foundNtuplets->size(tkid) == nHits);
 
     Rfit::Map3xNd<N> hits(phits + local_idx);
@@ -67,26 +61,23 @@ __global__ void kernelFastFit(Tuples const *__restrict__ foundNtuplets,
 
     // Prepare data structure
     auto const *hitId = foundNtuplets->begin(tkid);
-
-    // #ifdef RIEMANN_DEBUG
-    // if(foundNtuplets->size(tkid))
-    //   printf(" > Ntuple of size %d \n", foundNtuplets->size(tkid));
-    // #endif
-
-
     for (unsigned int i = 0; i < hitsInFit; ++i) {
       auto hit = hitId[i];
-      // printf("Hit global: %f,%f,%f\n", hhp->xGlobal(hit),hhp->yGlobal(hit),hhp->zGlobal(hit));
+      // if(N==6)
+      // printf("%f %f %f ", hhp->xGlobal(hit), hhp->yGlobal(hit), hhp->zGlobal(hit));
       float ge[6];
       hhp->cpeParams()
           .detParams(hhp->detectorIndex(hit))
           .frame.toGlobal(hhp->xerrLocal(hit), 0, hhp->yerrLocal(hit), ge);
-      // printf("Error: %f,%f,%f,%f,%f,%f\n",ge[0],ge[1],ge[2],ge[3],ge[4],ge[5]);
+      // printf("Error: %d: %f,%f,%f,%f,%f,%f\n",hhp->detInd_d[hit],ge[0],ge[1],ge[2],ge[3],ge[4],ge[5]);
 
       hits.col(i) << hhp->xGlobal(hit), hhp->yGlobal(hit), hhp->zGlobal(hit);
       hits_ge.col(i) << ge[0], ge[1], ge[2], ge[3], ge[4], ge[5];
     }
     Rfit::Fast_fit(hits, fast_fit);
+
+    // if(N==6)
+    // printf("%.2f %.2f %.2f %.2f ", fast_fit(0), fast_fit(1), fast_fit(2), fast_fit(3));
 
     // no NaN here....
     assert(fast_fit(0) == fast_fit(0));
@@ -151,6 +142,7 @@ __global__ void kernelLineFit(CAConstants::TupleMultiplicity const *__restrict__
   assert(circle_fit);
   assert(N <= nHits);
 
+
   // same as above...
 
   // look in bin for this hit multiplicity
@@ -177,6 +169,13 @@ __global__ void kernelLineFit(CAConstants::TupleMultiplicity const *__restrict__
     results->pt(tkid) = B / std::abs(circle_fit[local_idx].par(2));
     results->eta(tkid) = asinhf(line_fit.par(0));
     results->chi2(tkid) = (circle_fit[local_idx].chi2 + line_fit.chi2) / (2 * N - 5);
+
+
+    for(int j = 0; j<N; j++)
+    {
+      printf("%.2f %.2f %.2f ",hits.col(j)[0],hits.col(j)[1],hits.col(j)[2]);
+    }
+    printf("%.2f %.2f %.2f\n", results->pt(tkid), results->eta(tkid), results->chi2(tkid));
 
 #ifdef RIEMANN_DEBUG
     printf("kernelLineFit size %d for %d hits circle.par(0,1,2): %d %f,%f,%f\n",

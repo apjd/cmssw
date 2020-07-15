@@ -220,6 +220,16 @@ namespace gpuPixelRecHits {
 
         hits.rGlobal(h) = std::sqrt(xg * xg + yg * yg);
         hits.iphi(h) = unsafe_atan2s<7>(yg, xg);
+
+        // printf(" %.3f %.3f %.3f %.3f %d \n",xg,yg,zg,std::sqrt(xg * xg + yg * yg),unsafe_atan2s<7>(yg, xg));
+        //
+        // printf("%d \n",unsafe_atan2s<7>(0, 1.0));
+        // printf("%d \n",unsafe_atan2s<7>(1.0,0.0));
+        //
+        // printf("%d \n",unsafe_atan2s<7>(0, -1.0));
+        // printf("%d \n",unsafe_atan2s<7>(-0.01, -1.0));
+        // printf("%d \n",unsafe_atan2s<7>(-1.0,0.0));
+        // printf("%d \n",unsafe_atan2s<7>(-0.01, 1.0));
       }
       __syncthreads();
     }  // end loop on batches
