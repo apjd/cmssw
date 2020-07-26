@@ -39,13 +39,13 @@ void CAHitNtupletGeneratorKernelsCPU::buildDoublets(HitsOnCPU const &hh, cudaStr
   // FIXME avoid magic numbers
   auto nActualPairs = m_params.isUpgrade_ ? gpuPixelDoublets::nPairsPhase2 : gpuPixelDoublets::nPairs;
   if (!m_params.includeJumpingForwardDoublets_)
-    nActualPairs = m_params.isUpgrade_ ? 31 : 15;
+    nActualPairs = m_params.isUpgrade_ ? 69 : 69;
   if (m_params.minHitsPerNtuplet_ > 3) {
-    nActualPairs = m_params.isUpgrade_ ? 31 : 13;
+    nActualPairs = m_params.isUpgrade_ ? 69 : 69;
   }
 
   auto maxPairs = m_params.isUpgrade_ ? gpuPixelDoublets::nPairsPhase2 : gpuPixelDoublets::nPairs;
-  assert(nActualPairs <= maxPairs);
+  //assert(nActualPairs <= maxPairs);
   gpuPixelDoublets::getDoubletsFromHisto(device_theCells_.get(),
                                          device_nCells_,
                                          device_theCellNeighbors_,

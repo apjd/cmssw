@@ -8,7 +8,7 @@
 namespace gpuPixelDoublets {
 
   constexpr int nPairs = 13 + 2 + 4;
-  constexpr int nPairsPhase2 = 45;
+  constexpr int nPairsPhase2 = 69;
   static_assert(nPairs <= CAConstants::maxNumberOfLayerPairs());
 
   // start constants
@@ -25,7 +25,7 @@ namespace gpuPixelDoublets {
       4, 6, 7, 9                     // Jumping Forward (19)
   };
 
-
+/*
   CONSTANT_VAR const uint8_t layerPairsPhase2[2 * nPairsPhase2] = {
 
       0, 1, 0, 4, 0, 16,             // BPIX1 (3)
@@ -56,6 +56,37 @@ namespace gpuPixelDoublets {
 
 
       0, 2, 1, 3                     // 45
+};
+*/
+
+CONSTANT_VAR const uint8_t layerPairsPhase2[2 * nPairsPhase2] = {
+
+    0, 1, 0, 4, 0, 16,
+    1, 2, 1, 4, 1, 16,
+    4, 5, 16, 17,
+    2, 3, 2, 4, 2, 16, 5, 6, 17, 18,
+    0, 2, 1, 3,
+    0, 5, 0, 17,
+    4, 6, 17, 18,
+
+    3, 4, 3, 16,
+
+    //  Jumping Barrel to Forwad
+    1, 5, 1, 17,
+    2, 5, 2, 17,
+    3, 5, 3, 17,
+
+
+    4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, // right side
+    16, 17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 26, 27, // left side
+
+
+    5, 7, 7, 9, 9, 11, 11, 13, 13, 15,
+    17, 19, 19, 21, 21, 23, 23, 25, 25, 27,
+
+    4, 6, 6, 8, 8, 10, 10, 12, 12, 14, // jump right side
+    16, 18, 18, 20, 20, 22, 22, 24, 24, 26 // jump left side
+
 };
 
 
@@ -239,6 +270,7 @@ namespace gpuPixelDoublets {
                                 bool doPtCut,
                                 uint32_t maxNumOfDoublets, bool upgrade) {
     auto const& __restrict__ hh = *hhp;
+    upgrade = true;
     if(!upgrade)
     {
       doubletsFromHisto(layerPairs,
